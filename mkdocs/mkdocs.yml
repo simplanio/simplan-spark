@@ -1,0 +1,62 @@
+site_name: SimPlan Spark - Implementation for Spark Execution Engine
+repo_url: https://github.intuit.com/Simplan/simplan-spark
+nav:
+  - 'Overview': index.md
+  - 'Getting Started': GettingStarted.md
+  - 'Contribution Guide': ContributionGuide.md
+  - Operators:
+    - 'Build Your Own' : operators/BuildYourOperator.md
+    - Sources:
+      - Batch Sources:
+        - Delimited Source: operators/spark/sources/batch/DelimitedBatchSource.md
+        - JSON Source: operators/spark/sources/batch/JsonBatchSource.md
+        - AVRO Source: operators/spark/sources/batch/AvroBatchSource.md
+        - Parquet Source: operators/spark/sources/batch/ParquetBatchSource.md
+        - Kafka Source: operators/spark/sources/batch/KafkaBatchSource.md
+      - Stream Sources:
+        - Socket Streaming Source: operators/spark/sources/stream/SocketStreamingSource.md
+        - Kafka Streaming Source: operators/spark/sources/stream/KafkaStreamingSource.md
+        - File Streaming Source: operators/spark/sources/stream/FileStreamingSource.md
+      - Delta Table: operators/spark/sources/DeltaTableSource.md
+    - Sinks:
+      - Batch Sinks:
+        - CSV Sink: operators/spark/sinks/batch/CSVBatchSink.md
+        - JSON Sink: operators/spark/sinks/batch/JsonBatchSink.md
+        - AVRO Sink: operators/spark/sinks/batch/AvroBatchSink.md
+        - Parquet Sink: operators/spark/sinks/batch/ParquetBatchSink.md
+        - Kafka Sink: operators/spark/sinks/batch/KafkaBatchSink.md
+      - Stream Sinks:
+        - Socket Sink: operators/spark/sinks/stream/SocketStreamWriter.md
+        - Kafka Sink: operators/spark/sinks/stream/KafkaStreamSink.md
+    - Transformations:
+      - Spark SQL: operators/spark/transformations/SparkSql.md
+      - Filtering: operators/spark/transformations/Filtering.md
+      - Projection: operators/spark/transformations/Projections.md
+      - Delta Merge Operator: operators/spark/transformations/DeltaTableMerge.md
+  - Qualified Params:
+    - Schema Param: qualified_param/schema_qualified_param.md
+theme: # readthedocs
+  features:
+    - content.code.annotate
+  name: material
+  logo: img/SimplanLogo.png
+  favicon: img/favicon-96x96.png
+  icon:
+    repo: fontawesome/brands/github
+  palette:
+    # Light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: blue
+      accent: green
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    # Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: green
+      accent: light green
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode

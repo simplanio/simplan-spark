@@ -1,0 +1,252 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.intuit.data.simplan.spark</groupId>
+    <artifactId>simplan-spark-parent</artifactId>
+    <version>${revision}</version>
+    <inceptionYear>2021</inceptionYear>
+    <packaging>pom</packaging>
+    <name>SimPlan - Spark Parent</name>
+    <organization>
+        <name>Intuit Inc</name>
+        <url>https://github.intuit.com/tabraham1/SimPlan</url>
+    </organization>
+
+    <description>Simplan for Spark</description>
+
+    <modules>
+        <module>spark-core</module>
+        <module>spark-launcher</module>
+    </modules>
+
+    <properties>
+        <revision>1.0.0-SNAPSHOT</revision>
+        <simplan-framework.version>1.0.0-SNAPSHOT</simplan-framework.version>
+        <scala.version>2.12.4</scala.version>
+        <scala.minor.version>2.12</scala.minor.version>
+        <spark.version>3.2.2</spark.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <encoding>UTF-8</encoding>
+        <spec2.version>4.2.0</spec2.version>
+        <java.version>1.8</java.version>
+        <org.scalatest.version>3.0.4</org.scalatest.version>
+        <spark-avro.version>4.0.0</spark-avro.version>
+        <slf4j-log4j12.version>1.7.30</slf4j-log4j12.version>
+        <log4j.version>2.17.2</log4j.version>
+        <pureconfig.version>0.9.0</pureconfig.version>
+        <jackson-module-caseclass.version>1.1.1</jackson-module-caseclass.version>
+        <antlr4.version>4.7.1</antlr4.version>
+        <antlr4.plugin.version>4.7.1</antlr4.plugin.version>
+        <scala-parser-combinators.version>1.1.2</scala-parser-combinators.version>
+        <commons-lang.version>2.6</commons-lang.version>
+        <commons-io.version>2.8.0</commons-io.version>
+        <delta.version>2.0.0</delta.version>
+        <releasedeployrepo>https://artifact.intuit.com/artifactory/maven.Simplan.simplan-releases</releasedeployrepo>
+        <snapshotdeployrepo>https://artifact.intuit.com/artifactory/maven.Simplan.simplan-snapshots</snapshotdeployrepo>
+        <central.repo>https://artifact.intuit.com/artifactory/maven-proxy</central.repo>
+
+        <scoverage.plugin.version>1.4.11</scoverage.plugin.version>
+
+
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>intuit-artifactory</id>
+            <url>${central.repo}</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.scalatest</groupId>
+            <artifactId>scalatest_${scala.minor.version}</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.apache.spark</groupId>
+                <artifactId>spark-core_${scala.minor.version}</artifactId>
+                <version>${spark.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.spark</groupId>
+                <artifactId>spark-sql_${scala.minor.version}</artifactId>
+                <version>${spark.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.spark</groupId>
+                <artifactId>spark-sql-kafka-0-10_${scala.minor.version}</artifactId>
+                <version>${spark.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.databricks</groupId>
+                <artifactId>spark-avro_${scala.minor.version}</artifactId>
+                <version>${spark-avro.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.intuit.data.simplan.framework</groupId>
+                <artifactId>simplan-framework-parent</artifactId>
+                <version>${simplan-framework.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+                <version>${log4j.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <profiles>
+        <profile>
+            <id>upload-artifact</id>
+            <distributionManagement>
+                <snapshotRepository>
+                    <uniqueVersion>false</uniqueVersion>
+                    <id>scm.dev.snap.repo</id>
+                    <name>SNAPSHOT REPO</name>
+                    <url>${snapshotdeployrepo}</url>
+                    <layout>default</layout>
+                </snapshotRepository>
+                <repository>
+                    <id>scm.int.rel.repo</id>
+                    <name>RELEASE REPO</name>
+                    <url>${releasedeployrepo}</url>
+                    <layout>default</layout>
+                </repository>
+            </distributionManagement>
+        </profile>
+    </profiles>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <configuration>
+                    <updatePomFile>true</updatePomFile>
+                    <flattenMode>bom</flattenMode>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>flatten.clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+                <version>3.2.2</version>
+                <configuration>
+                    <scalaCompatVersion>${scala.minor.version}</scalaCompatVersion>
+                    <scalaVersion>${scala.version}</scalaVersion>
+                    <args>
+                        <arg>-Xmacro-settings:materialize-derivations</arg>
+                    </args>
+                    <jvmArgs>
+                        <jvmArg>-Xms128m</jvmArg>
+                        <jvmArg>-Xmx1024m</jvmArg>
+                    </jvmArgs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>scala-compile-first</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>scala-test-compile</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- disable surefire -->
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-surefire-plugin</artifactId>-->
+<!--                <version>2.7</version>-->
+<!--                <configuration>-->
+<!--                    <skipTests>true</skipTests>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
+            <!-- enable scalatest -->
+            <plugin>
+                <groupId>org.scalatest</groupId>
+                <artifactId>scalatest-maven-plugin</artifactId>
+                <version>2.2.0</version>
+                <configuration>
+                    <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+                    <junitxml>.</junitxml>
+                    <filereports>WDF TestSuite.txt</filereports>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>test</id>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.scoverage</groupId>
+                <artifactId>scoverage-maven-plugin</artifactId>
+                <version>${scoverage.plugin.version}</version>
+                <configuration>
+                    <scalaVersion>${scala.version}</scalaVersion>
+                    <highlighting>true</highlighting>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.scoverage</groupId>
+                <artifactId>scoverage-maven-plugin</artifactId>
+                <version>${scoverage.plugin.version}</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>report</report>
+                            <!-- or <report>integration-report</report> -->
+                            <!-- or <report>report-only</report> -->
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
+</project>

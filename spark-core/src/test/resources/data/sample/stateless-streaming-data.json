@@ -1,0 +1,8 @@
+{ "id": 1, "firstName": "Thomas", "lastName": "Abraham" ,"location": "Sunnyvale","workingOn": "Simplan"}
+{ "id": 2, "firstName": "Kiran", "lastName": "Hiremath" ,"location": "Irvine","workingOn": "Simplan"}
+{ "id": 3, "firstName": "Rama", "lastName": "Arvabhumi" ,"location": "Milpitas","workingOn": "Simplan"}
+{ "id": 4, "firstName": "Shradha", "lastName": "Ambekar","location": "Mountain View","workingOn": "Simplan"}
+{ "id": 5, "firstName": "Anand", "lastName": "Elluru" ,"location": "North Carolina","workingOn": "Superglue"}
+{ "id": 6, "firstName": "Sooji", "lastName": "Son" ,"location": "Ohio","workingOn": "Superglue"}
+{ "id": 7, "firstName": "Yang", "lastName": "Zhou" ,"location": "San Jose","workingOn": "Superglue"}
+{ "id": 8, "firstName": "Varun", "lastName": "Sood","location": "San Jose","workingOn": "Superglue"}

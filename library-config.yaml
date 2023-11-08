@@ -1,0 +1,29 @@
+#When building in local machine or in jenkins in a branch != master, artifactVersion value will be 1.0.0-SNAPSHOT
+artifactVersion: 0.2.3
+simplanFrameworkVersion: 0.3.1.137
+
+asset_id: 5479772439537201295
+asset_alias: Intuit.simplan.simplanspark
+
+mavenSettingsFileId: ibp-maven-settings-file
+artifactoryCredentialsId: artifactory-Simplan-Spark
+mavenImage: "maven:3.5.3-jdk-8"
+MAIN_BRANCH: "master"
+groupId: com.intuit.Simplan.Simplan-Spark
+artifactId: Simplan-Spark
+jacocoExecPattern: "target/*.exec"
+
+githubCredentialsId: "github-svc-sbseg-ci"
+orgRepo: Simplan/simplan-spark
+
+CODECOV_CREDENTIALS: ibp-codecov-token
+SONAR_HOST: https://pub-sonarqube-ibp-prod-us-west-2-app.prod1-ibp.a.intuit.com/
+GITHUB_API: https://github.intuit.com/api/v3/
+
+enableJiraTransition: false
+
+deploy_repo: github.intuit.com/Simplan/simplan-spark.git
+enableScorecardReadinessCheck: false
+environments:
+  prd:
+    namespace: simplan-spark
