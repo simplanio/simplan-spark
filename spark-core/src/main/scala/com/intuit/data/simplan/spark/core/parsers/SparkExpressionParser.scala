@@ -14,9 +14,9 @@ class SparkExpressionParser(data: Map[String, DataFrame]) extends BaseCombinator
 
   //override def factor: Parser[Double] = super.factor | numericOperations
 
-  override def numericOperations: Parser[Double] = super.numericOperations | singleArgNumericFunctions | noArgsNumericFunctions
+  override def numericOperations: Parser[Double] = super.numericOperations | singleArgNumericFunctions | noArgsNumericFunctions | multiArgNumericFunctions
 
-  def sparkNumericOperations: Parser[Double] = singleArgNumericFunctions | noArgsNumericFunctions
+  def sparkNumericOperations: Parser[Double] = singleArgNumericFunctions | noArgsNumericFunctions | multiArgNumericFunctions
 
   def sparkOperationToNumberComparison: Parser[Boolean] =
     numericOperations ~ comparator ~ expr ^^ {
@@ -35,7 +35,11 @@ class SparkExpressionParser(data: Map[String, DataFrame]) extends BaseCombinator
       case "max" ~ _ ~ dataframeName ~ _ ~ column ~ _           => data(dataframeName).agg(max(column)).first().get(0).toString.toDouble
       case "average" ~ _ ~ dataframeName ~ _ ~ column ~ _       => data(dataframeName).agg(avg(column)).first().get(0).toString.toDouble
       case "count" ~ _ ~ dataframeName ~ _ ~ column ~ _         => data(dataframeName).select(column).count().toDouble
-      case "countDistinct" ~ _ ~ dataframeName ~ _ ~ column ~ _ => data(dataframeName).select(column).distinct().count().toDouble
+    }
+
+  def multiArgNumericFunctions: Parser[Double] =
+    functionName ~ "(" ~ stringVar ~ "," ~ stringVarList ~ ")" ^^ {
+      case "countDistinct" ~ _ ~ dataframeName ~ _ ~ column ~ _ => data(dataframeName).dropDuplicates(column.split(",").map(_.trim).array).count().toDouble
     }
 
   def noArgsNumericFunctions: Parser[Double] =

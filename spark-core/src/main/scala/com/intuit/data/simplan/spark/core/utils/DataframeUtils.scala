@@ -21,7 +21,7 @@ object DataframeUtils extends Logging {
     .collect()(0)(1)
     .toString).toOption
 
-  def repartitionDataframe(spark: SparkSession, dataframe: DataFrame, repartitionConfig: SparkRepartitionConfig, dataframeName: String = ""): (DataFrame, Option[PartitionOptimizerResult]) = {
+  def repartition(spark: SparkSession, dataframe: DataFrame, repartitionConfig: SparkRepartitionConfig, dataframeName: String = ""): (DataFrame, Option[PartitionOptimizerResult]) = {
     val optimisedPartitions: Option[PartitionOptimizerResult] = repartitionConfig.calculateOptimisedPartition(spark)
 
     if (optimisedPartitions.isEmpty) {
@@ -48,4 +48,15 @@ object DataframeUtils extends Logging {
       )
     }
   }
+
+  def count(dataframe: DataFrame, uniqueColumns: List[String] = List.empty): Long =
+    if (uniqueColumns.isEmpty) dataframe.count()
+    else dataframe.dropDuplicates(uniqueColumns).count()
+
+  def printSchema(heading: String, dataframe: DataFrame): Unit =
+    if (logger.isDebugEnabled()) {
+      println(s"===== Start : $heading ======")
+      dataframe.printSchema()
+      println(s"===== End : $heading ======")
+    }
 }
