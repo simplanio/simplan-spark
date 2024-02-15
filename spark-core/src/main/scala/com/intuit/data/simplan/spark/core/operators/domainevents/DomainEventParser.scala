@@ -28,7 +28,6 @@ class DomainEventParser(appContext: SparkAppContext, operatorContext: OperatorCo
     DebugUtils.printSchema("With deduplicated PK", deduplicatedDf)
 
     val parsedDomainEventDF = deduplicatedDf.select(col(ColumnHeaders), col(ColumnHeadersRaw), col(ColumnValue))
-
     if (operatorConfig.tableType == TEMP)
       parsedDomainEventDF.createOrReplaceTempView(operatorContext.taskName)
 

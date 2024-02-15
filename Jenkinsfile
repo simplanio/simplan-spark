@@ -10,13 +10,13 @@ def revisionNo = ""
 // Converting Slashes to hyphens from branch name
 def branchNameConverted = env.BRANCH_NAME.replace('/','-')
 // Adding version suffix to a non-release build.
-def versionSuffix = ('master' != env.BRANCH_NAME) ? "-${branchNameConverted}-SNAPSHOT" : ''
+def versionSuffix = ('Imain' != env.BRANCH_NAME) ? "-${branchNameConverted}-SNAPSHOT" : ''
 // Slack channel. For snapshots has a -snapshot appended
 def slackChannel = "build-simplan"
 def slackCrChannel = "${slackChannel}-cr-notifications"
-slackChannel = ('master' == env.BRANCH_NAME) ? slackChannel : "${slackChannel}-snapshot"
+slackChannel = ('Imain' == env.BRANCH_NAME) ? slackChannel : "${slackChannel}-snapshot"
 // Slack messages for snapshot and release, please look below set in INIT DEFINITIONS to modify RELEASE MESSAGE value.
-def slackRepoName = "*SIMPLAN SPARK*\n"
+def slackRepoName = "*SIMPLAN SPARK (OPEN SOURCE)*\n"
 def slackSnapshotMessage  = "#<${env.RUN_DISPLAY_URL}|${env.BUILD_NUMBER}> for branch ${env.BRANCH_NAME}.\n"
 def slackReleaseMessage  = ''
 def slackMessage = slackRepoName + "#<${env.RUN_DISPLAY_URL}|${env.BUILD_NUMBER}>. "
@@ -121,10 +121,10 @@ pipeline {
         script {
           config = readConfigYAML()
           commitId = sh(script: 'git rev-parse HEAD',returnStdout: true)
-          revisionNo = ('master' == env.BRANCH_NAME) ? config.artifactVersion+'.'+env.BUILD_NUMBER : "1.0.0${versionSuffix}"
+          revisionNo = ('Imain' == env.BRANCH_NAME) ? config.artifactVersion+'.'+env.BUILD_NUMBER : "1.0.0${versionSuffix}"
           def numberToSendInSlack = (env.ARTIFACT_VERSION == "e.g.1.0.0.100" && params.promote == "E2E") ? revisionNo : env.ARTIFACT_VERSION
           slackReleaseMessage = "*${params.promote}*. *RELEASE* v<${env.RUN_DISPLAY_URL}|${numberToSendInSlack}>\n"
-          slackMessage = slackRepoName + (('master' == env.BRANCH_NAME) ? slackReleaseMessage : slackSnapshotMessage)
+          slackMessage = slackRepoName + (('Imain' == env.BRANCH_NAME) ? slackReleaseMessage : slackSnapshotMessage)
           adjustPOMValues(config, depPropertiesNames)
         }
       }
@@ -135,7 +135,7 @@ pipeline {
         anyOf {
           changeRequest ()
           allOf{
-            not { branch 'master' }
+            not { branch 'Imain' }
             not { branch 'develop' }
           }
         }
@@ -158,7 +158,7 @@ pipeline {
         allOf {
           not { changeRequest() }
           anyOf {
-            branch 'master'
+            branch 'Imain'
             branch 'develop'
           }
           expression { env.ARTIFACT_VERSION == "e.g.1.0.0.100" && params.promote == "E2E" }
@@ -175,7 +175,7 @@ pipeline {
 		          """
 		          mavenBuildCI("-P upload-artifact -Drevision=${revisionNo} -U -B -s settings.xml")
 		          // Tagging only when it is a realease version (master branch), artifact version is built from config.artifactVersion and buildNo
-		          if ( env.BRANCH_NAME == 'master' ) {
+		          if ( env.BRANCH_NAME == 'Imain' ) {
 		            gitTag(revisionNo, env.GIT_URL)
 		          }
 		        }
@@ -192,7 +192,7 @@ pipeline {
 
         stage('DOCUMENTATION DEPLOYMENT') {
           when {
-            branch 'master'
+            branch 'Imain'
           }
           steps{
             container('mkdocs'){
@@ -208,7 +208,7 @@ pipeline {
         allOf {
           anyOf {
             branch 'develop'
-            branch 'master'
+            branch 'Imain'
           }
           not { changeRequest() }
           expression { 'E2E' == params.promote }
@@ -238,7 +238,7 @@ pipeline {
 
         stage('E2E'){
           when {
-            branch 'master'
+            branch 'Imain'
           }
           steps {
             script {
@@ -256,7 +256,7 @@ pipeline {
     stage('HIGHER ENVIRONMENTS DEPLOYMENT STAGE'){
       when {
         allOf {
-          branch 'master'
+          branch 'Imain'
           not { changeRequest() }
           expression { 'E2E' != params.promote }
           expression { env.ARTIFACT_VERSION != "e.g.1.0.0.100" && env.ARTIFACT_VERSION ==~ /\d+\.\d+\.\d+\.\d+/ }
@@ -412,7 +412,7 @@ def adjustPOMValues(config, depPropertiesNames){
 }
 
 def numbersAccordingBranch(){
-  if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'develop') return '20'
+  if (env.BRANCH_NAME == 'Imain' || env.BRANCH_NAME == 'develop') return '20'
   else return '5'
 }
 
