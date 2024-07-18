@@ -10,8 +10,8 @@ import org.apache.spark.sql.{DataFrame, SaveMode}
 /** @author Abraham, Thomas - tabraham1
   *         Created on 18-Nov-2021 at 10:58 AM
   */
-class KafkaBatchSink(sparkAppContext: SparkAppContext, operatorContext: OperatorContext) extends AbstractBatchSink(sparkAppContext, operatorContext, Map.empty, SaveMode.Append) {
-  override def customizeSourceConfig(readerConfig: SparkBatchSinkConfig): SparkBatchSinkConfig = readerConfig.copy(format = "kafka")
+class KafkaBatchSink(sparkAppContext: SparkAppContext, operatorContext: OperatorContext) extends AbstractBatchSink(sparkAppContext, operatorContext, Map.empty) {
+  override def customizeSourceConfig(readerConfig: SparkBatchSinkConfig): SparkBatchSinkConfig = readerConfig.copy(format = "kafka", saveMode = SaveMode.Append)
 
   override def customiseFinalTransformation(dataFrame: DataFrame): DataFrame =
     dataFrame.select(to_json(struct("*")).as("value"))

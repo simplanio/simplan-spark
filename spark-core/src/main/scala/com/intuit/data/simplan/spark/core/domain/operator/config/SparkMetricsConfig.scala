@@ -15,14 +15,19 @@
  * limitations under the License.
  */
 
-package com.intuit.data.simplan.spark.core.domain
+package com.intuit.data.simplan.spark.core.domain.operator.config
 
 /** @author Abraham, Thomas - tabraham1
-  *         Created on 15-Aug-2023 at 3:24 PM
+  *         Created on 30-Dec-2023 at 10:07 AM
   */
-case class SparkOperatorSettings(
-    allowCaching: Boolean = true,
-    allowRepartition: Boolean = true,
-    allowRetries: Boolean = true,
-    allowMetrics: Boolean = true
-)
+case class SparkMetricsConfig(
+    enabled: Boolean = true,
+    count: Boolean = true,
+    countDistinct: Boolean = true,
+    countDistinctByColumns: List[String] = List.empty
+) {
+  def isMetricsEnabled: Boolean = Option(enabled).getOrElse(true)
+  def isCountEnabled: Boolean = Option(count).getOrElse(false)
+  def isCountDistinctEnabled: Boolean = Option(countDistinct).getOrElse(false)
+  def getCountDistinctByColumns: List[String] = Option(countDistinctByColumns).getOrElse(List.empty)
+}

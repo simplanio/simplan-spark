@@ -19,6 +19,7 @@ package com.intuit.data.simplan.spark.core.domain.operator.config.sinks
 
 import com.intuit.data.simplan.core.domain.operator.config.sinks.BatchSinkConfig
 import com.intuit.data.simplan.spark.core.domain.operator.config.SparkRepartitionConfig
+import org.apache.spark.sql.SaveMode
 
 /** @author Abraham, Thomas - tabraham1
   *         Created on 18-Nov-2021 at 10:50 AM
@@ -28,10 +29,16 @@ case class SparkBatchSinkConfig(
     override val format: String,
     override val location: String,
     override val options: Map[String, String] = Map.empty,
+    saveMode: SaveMode = SaveMode.Overwrite,
     repartition: Option[SparkRepartitionConfig] = None,
-    partitionBy: List[String] = List.empty
+    partitionBy: List[String] = List.empty,
+    columnUniquenessValidation: List[String] = List.empty
 ) extends BatchSinkConfig(source, format, location, options) {
   def resolvedRepartition: SparkRepartitionConfig = repartition.getOrElse(SparkRepartitionConfig()).copy(hint = Option(location))
 
   def resolvedPartitionBy: List[String] = if (partitionBy != null) partitionBy else List.empty
+
+  def resolvedSaveMode: SaveMode = Option(saveMode).getOrElse(SaveMode.Overwrite)
+
+  def resolvedColumnUniquenessValidation: List[String] = if (columnUniquenessValidation != null) columnUniquenessValidation else List.empty
 }

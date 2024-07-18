@@ -27,6 +27,7 @@ class SparkOperatorResponse(
 
 object SparkOperatorResponse {
   def continue = new SparkOperatorResponse(canContinue = true)
+  def continue(dfName: String, dataFrame: DataFrame) = new SparkOperatorResponse(canContinue = true, dataframes = Map(dfName -> dataFrame))
   def continue(message: String) = new SparkOperatorResponse(canContinue = true, message = message)
 
   def dontContinue(message: String) = new SparkOperatorResponse(canContinue = false, message = message)

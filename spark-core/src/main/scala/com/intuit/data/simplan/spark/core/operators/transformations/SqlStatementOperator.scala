@@ -14,7 +14,6 @@ import org.apache.spark.sql.DataFrame
 class SqlStatementOperator(appContext: SparkAppContext, operatorContext: OperatorContext) extends SparkOperator[SqlStatementConfig](appContext, operatorContext) {
 
   override def process(request: SparkOperatorRequest): SparkOperatorResponse = {
-    appContext.emitters.get("opsMetrics").emit("Something is sending a message to opsMetrics")
     val frame: DataFrame = appContext.spark.sql(operatorConfig.sql)
     if (operatorConfig.tableType == TableType.TEMP) frame.createOrReplaceTempView(operatorConfig.table.getOrElse(operatorContext.taskName))
     new SparkOperatorResponse(true, Map(operatorContext.taskName -> frame), Map.empty, Map(Lineage.RESPONSE_VALUE_KEY -> Lineage(operatorConfig.sql)))

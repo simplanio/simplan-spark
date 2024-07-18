@@ -15,14 +15,17 @@
  * limitations under the License.
  */
 
-package com.intuit.data.simplan.spark.core.domain
+package com.intuit.data.simplan.spark.core.domain.operator.config
 
 /** @author Abraham, Thomas - tabraham1
-  *         Created on 15-Aug-2023 at 3:24 PM
+  *         Created on 27-Dec-2023 at 10:17 AM
   */
-case class SparkOperatorSettings(
-    allowCaching: Boolean = true,
-    allowRepartition: Boolean = true,
-    allowRetries: Boolean = true,
-    allowMetrics: Boolean = true
-)
+case class SparkRetryConfig(
+    enabled: Boolean = false,
+    maxAttempts: Int = 3,
+    delayInSeconds: Int = 5
+) {
+  def isRetryEnabled: Boolean = Option(enabled).getOrElse(false)
+  def getMaxAttempts: Int = Option(maxAttempts).getOrElse(3)
+  def getDelayInSeconds: Int = Option(delayInSeconds).getOrElse(5)
+}

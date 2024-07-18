@@ -1,16 +1,15 @@
 package com.intuit.data.simplan.spark.core.context
 
 import com.intuit.data.simplan.common.files.FileUtils
-import com.intuit.data.simplan.core.aws.AmazonS3FileUtils
 import com.intuit.data.simplan.core.context.{AppContext, InitContext}
 import com.intuit.data.simplan.global.qualifiedstring.QualifiedParameterManager
 import com.intuit.data.simplan.spark.core.config.SparkSystemConfiguration
 import com.intuit.data.simplan.spark.core.domain.Constants.ENABLE_HIVE_SUPPORT
-import com.intuit.data.simplan.spark.core.monitoring.StreamMonitoring
 import com.intuit.data.simplan.spark.core.qualifiedstring.{DDLSchemaQualifiedParamHandler, JsonSchemaQualifiedParamHandler}
 import com.intuit.data.simplan.spark.core.utils.SparkFileUtils
+import com.typesafe.config.ConfigValueFactory
 import org.apache.spark.sql.SparkSession
-import org.apache.spark.{SparkConf, SparkContext, SparkFiles}
+import org.apache.spark.{SparkConf, SparkContext}
 import org.slf4j.LoggerFactory
 
 /** @author - Abraham, Thomas - tabaraham1
@@ -19,11 +18,12 @@ import org.slf4j.LoggerFactory
 class SparkAppContext(val initContext: InitContext) extends AppContext(initContext) {
   private lazy val logger = LoggerFactory.getLogger(classOf[SparkAppContext])
   def this(configs: Array[String]) = this(InitContext(userConfigs = configs))
-
   addDefaultAppContextConfigFile("spark-operator-mappings.conf")
   addDefaultAppContextConfigFile("spark-config-base.conf")
   QualifiedParameterManager.registerHandler(new DDLSchemaQualifiedParamHandler)
   QualifiedParameterManager.registerHandler(new JsonSchemaQualifiedParamHandler)
+
+  override lazy val applicationId: String = spark.sparkContext.applicationId
 
   private lazy val sparkSystemConfiguration: SparkSystemConfiguration = appContextConfig.getSystemConfigAs[SparkSystemConfiguration]("spark")
 
@@ -44,6 +44,7 @@ class SparkAppContext(val initContext: InitContext) extends AppContext(initConte
     registerCustomUDFs(session)
     session
   }
+  initContext.overrideAnyConfig("simplan.application.runId", ConfigValueFactory.fromAnyRef(spark.sparkContext.applicationId))
 //  StreamMonitoring(this).attachMonitoringListener()
 
   private def registerCustomUDFs(spark: SparkSession): Unit = {

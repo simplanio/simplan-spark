@@ -22,5 +22,7 @@ package com.intuit.data.simplan.spark.core.domain.operator.config
   */
 case class SparkOperatorOptionConfig(
     cache: Option[SparkCacheConfig] = None,
-    repartition: Option[SparkRepartitionConfig] = None
+    repartition: Option[SparkRepartitionConfig] = None,
+    retry: Option[SparkRetryConfig] = None,
+    metrics: Option[SparkMetricsConfig] = None
 )
