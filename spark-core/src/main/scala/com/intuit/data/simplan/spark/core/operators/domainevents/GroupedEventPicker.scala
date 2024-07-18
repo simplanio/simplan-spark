@@ -1,6 +1,5 @@
 package com.intuit.data.simplan.spark.core.operators.domainevents
 
-import com.fasterxml.jackson.module.caseclass.annotation.CaseClassDeserialize
 import com.intuit.data.simplan.core.domain.operator.{OperatorConfig, OperatorContext}
 import com.intuit.data.simplan.spark.core.context.SparkAppContext
 import com.intuit.data.simplan.spark.core.domain.Constants._
@@ -11,7 +10,6 @@ import org.apache.spark.sql.functions._
 /** @author Abraham, Thomas - tabraham1
   *         Created on 01-Dec-2021 at 12:27 PM
   */
-@CaseClassDeserialize
 case class GroupedEventPickerConfig(source: String, extract: Boolean = false, groupedByFields: Seq[String] = DefaultPrimaryKeys, sequenceField: String = s"$ColumnHeaders.$ColumnHeaderEntityVersion", picker: String = "LARGEST") extends OperatorConfig
 
 class GroupedEventPicker(appContext: SparkAppContext, operatorContext: OperatorContext) extends SparkOperator[GroupedEventPickerConfig](appContext, operatorContext) {

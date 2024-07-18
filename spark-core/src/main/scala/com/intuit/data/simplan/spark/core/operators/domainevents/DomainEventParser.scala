@@ -1,6 +1,5 @@
 package com.intuit.data.simplan.spark.core.operators.domainevents
 
-import com.fasterxml.jackson.module.caseclass.annotation.CaseClassDeserialize
 import com.intuit.data.simplan.core.domain.TableType
 import com.intuit.data.simplan.core.domain.TableType._
 import com.intuit.data.simplan.core.domain.operator.{OperatorConfig, OperatorContext}
@@ -16,7 +15,6 @@ import org.apache.spark.sql.functions._
 /** @author Abraham, Thomas - tabraham1
   *         Created on 29-Nov-2021 at 9:54 AM
   */
-@CaseClassDeserialize
 case class DomainEventParserConfig(source: String, extract: Boolean = false, primaryKeys: Seq[String] = DefaultPrimaryKeys, tableType: TableType = TableType.TEMP) extends OperatorConfig
 
 class DomainEventParser(appContext: SparkAppContext, operatorContext: OperatorContext) extends SparkOperator[DomainEventParserConfig](appContext, operatorContext) with Logging {

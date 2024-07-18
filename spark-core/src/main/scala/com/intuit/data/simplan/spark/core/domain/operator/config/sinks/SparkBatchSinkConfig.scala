@@ -17,14 +17,12 @@
 
 package com.intuit.data.simplan.spark.core.domain.operator.config.sinks
 
-import com.fasterxml.jackson.module.caseclass.annotation.CaseClassDeserialize
 import com.intuit.data.simplan.core.domain.operator.config.sinks.BatchSinkConfig
 import com.intuit.data.simplan.spark.core.domain.operator.config.SparkRepartitionConfig
 
 /** @author Abraham, Thomas - tabraham1
   *         Created on 18-Nov-2021 at 10:50 AM
   */
-@CaseClassDeserialize
 case class SparkBatchSinkConfig(
     override val source: String,
     override val format: String,

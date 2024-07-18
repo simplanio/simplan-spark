@@ -1,6 +1,5 @@
 package com.intuit.data.simplan.spark.core.operators.sources
 
-import com.fasterxml.jackson.module.caseclass.annotation.CaseClassDeserialize
 import com.intuit.data.simplan.core.domain.TableType
 import com.intuit.data.simplan.core.domain.operator.{OperatorConfig, OperatorContext}
 import com.intuit.data.simplan.global.exceptions.SimplanExecutionException
@@ -13,7 +12,6 @@ import org.apache.spark.sql.Row
 /** @author Abraham, Thomas - tabraham1
   *         Created on 02-Dec-2021 at 2:10 PM
   */
-@CaseClassDeserialize
 case class DeltaTableSourceConfig(path: String, schema: Option[String], tableType: TableType = TableType.NONE, autoCreate: Boolean = true) extends OperatorConfig
 
 class DeltaTableSource(sparkAppContext: SparkAppContext, operatorContext: OperatorContext) extends SparkOperator[DeltaTableSourceConfig](sparkAppContext, operatorContext) {
