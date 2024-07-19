@@ -190,16 +190,16 @@ pipeline {
           }
         }
 
-        stage('DOCUMENTATION DEPLOYMENT') {
-          when {
-            branch 'Imain'
-          }
-          steps{
-            container('mkdocs'){
-              mkdocsFunction()
-            }
-          }
-        }
+//         stage('DOCUMENTATION DEPLOYMENT') {
+//           when {
+//             branch 'Imain'
+//           }
+//           steps{
+//             container('mkdocs'){
+//               mkdocsFunction()
+//             }
+//           }
+//         }
       }
     }
 
