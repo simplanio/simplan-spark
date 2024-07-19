@@ -175,9 +175,9 @@ pipeline {
 		          """
 		          mavenBuildCI("-P upload-artifact -Drevision=${revisionNo} -U -B -s settings.xml")
 		          // Tagging only when it is a realease version (master branch), artifact version is built from config.artifactVersion and buildNo
-		          if ( env.BRANCH_NAME == 'Imain' ) {
-		            gitTag(revisionNo, env.GIT_URL)
-		          }
+// 		          if ( env.BRANCH_NAME == 'Imain' ) {
+// 		            gitTag(revisionNo, env.GIT_URL)
+// 		          }
 		        }
 		      }
 		      post {
