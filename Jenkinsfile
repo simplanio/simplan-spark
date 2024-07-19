@@ -41,7 +41,7 @@ pipeline {
         spec:
           containers:
           - name: maven
-            image: 'docker.intuit.com/oicp/standard/maven/amzn-maven-corretto11:5'
+            image: 'docker.artifactory.a.intuit.com/maven:3.5.3-jdk-8'
             tty: true
             command:
             - cat
@@ -56,6 +56,11 @@ pipeline {
             volumeMounts:
               - name: shared-build-output
                 mountPath: /var/run/outputs
+          - name: sonar-maven
+            image: 'docker.artifactory.a.intuit.com/maven:3.6.0-jdk-11'
+            command:
+                - cat
+            tty: true
           - name: mkdocs
             image: docker.intuit.com/dev-test/oid-mkdocs-builder/service/oid-mkdocs-builder:latest
             tty: true
@@ -145,10 +150,15 @@ pipeline {
       }
       post {
         success {
+         container('sonar-maven'){
           PRPostSuccess(config)
+          }
         }
         always {
-          PRPostAlways(config)
+           container('sonar-maven')
+                          {
+                           PRPostAlways(config)
+                          }
         }
       }
     }
@@ -182,10 +192,14 @@ pipeline {
 		      }
 		      post {
             success {
+             container('sonar-maven'){
               CIPostSuccess(config)
+              }
             }
             always {
+            container('sonar-maven'){
               CIPostAlways(config)
+              }
             }
           }
         }
