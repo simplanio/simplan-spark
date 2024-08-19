@@ -52,14 +52,19 @@ abstract class AbstractBatchSink(
         .mode(operatorConfig.resolvedSaveMode)
         .pipe(applyOptionsIfAvailable)
         .pipe(applyPartitionBy)
-      dataframeWriter.save(operatorConfig.location)
+      val locationType = operatorConfig.locationType.getOrElse("path").toLowerCase
+      logger.debug("Setting Location type as " + locationType)
+      locationType match {
+        case "path"  => dataframeWriter.save(operatorConfig.location)
+        case "table" => dataframeWriter.saveAsTable(operatorConfig.location)
+        case _       => throw new SimplanExecutionException(s"Invalid location type ${operatorConfig.locationType}. Allowed values are path or table")
+      }
     } match {
       case Success(_) => SparkOperatorResponse.continue
       case Failure(exception) =>
         val message = s"Failed to write ${operatorConfig.format} file at ${operatorConfig.location}"
         throw new SimplanExecutionException(message, exception)
     }
-
   }
 
   def applyOptionsIfAvailable(writer: DataFrameWriter[Row]): DataFrameWriter[Row] = {

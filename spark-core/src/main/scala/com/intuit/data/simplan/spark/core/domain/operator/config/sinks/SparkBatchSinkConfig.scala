@@ -29,6 +29,7 @@ case class SparkBatchSinkConfig(
     override val format: String,
     override val location: String,
     override val options: Map[String, String] = Map.empty,
+    locationType: Option[String] = None,
     saveMode: SaveMode = SaveMode.Overwrite,
     repartition: Option[SparkRepartitionConfig] = None,
     partitionBy: List[String] = List.empty,
@@ -39,6 +40,8 @@ case class SparkBatchSinkConfig(
   def resolvedPartitionBy: List[String] = if (partitionBy != null) partitionBy else List.empty
 
   def resolvedSaveMode: SaveMode = Option(saveMode).getOrElse(SaveMode.Overwrite)
+
+  def resolvedLocationType: String = locationType.getOrElse("path").toLowerCase
 
   def resolvedColumnUniquenessValidation: List[String] = if (columnUniquenessValidation != null) columnUniquenessValidation else List.empty
 }

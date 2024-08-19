@@ -15,7 +15,11 @@ class SqlStatementOperator(appContext: SparkAppContext, operatorContext: Operato
 
   override def process(request: SparkOperatorRequest): SparkOperatorResponse = {
     val frame: DataFrame = appContext.spark.sql(operatorConfig.sql)
-    if (operatorConfig.tableType == TableType.TEMP) frame.createOrReplaceTempView(operatorConfig.table.getOrElse(operatorContext.taskName))
+    operatorConfig.tableType match {
+      case TableType.TEMP    => frame.createOrReplaceTempView(operatorConfig.table.getOrElse(operatorContext.taskName))
+      case TableType.MANAGED => frame.write.format(operatorConfig.resolvedTableFormat).saveAsTable(operatorConfig.table.getOrElse(operatorContext.taskName))
+      case _                 =>
+    }
     new SparkOperatorResponse(true, Map(operatorContext.taskName -> frame), Map.empty, Map(Lineage.RESPONSE_VALUE_KEY -> Lineage(operatorConfig.sql)))
   }
 }
