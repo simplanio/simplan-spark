@@ -14,4 +14,7 @@ class SparkApplication(sparkAppContext: SparkAppContext) extends Application(spa
 
 object SparkApplication {
   def apply(appContext: SparkAppContext): SparkApplication = new SparkApplication(appContext)
+
+  def context(appContext: SparkAppContext): SparkApplication = new SparkApplication(appContext)
+
 }
