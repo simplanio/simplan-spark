@@ -42,6 +42,7 @@
             <groupId>io.delta</groupId>
             <artifactId>delta-core_${scala.minor.version}</artifactId>
             <version>${delta.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
