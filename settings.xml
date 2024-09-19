@@ -4,7 +4,7 @@
     <mirrors>
         <mirror>
             <id>central-mirror</id>
-            <url>https://artifact.intuit.com/artifactory/maven-public</url>
+            <url>https://artifact.intuit.com/artifactory/maven-proxy</url>
             <mirrorOf>*</mirrorOf>
         </mirror>
     </mirrors>
