@@ -4,8 +4,7 @@
     <mirrors>
         <mirror>
             <id>central-mirror</id>
-            <url>${NEXUS_PROXY_URL}/content/groups/public</url>
-            <!-- same value as ${central.repo} from (jsk-internal-parent) POM -->
+            <url>https://artifact.intuit.com/artifactory/maven-public</url>
             <mirrorOf>*</mirrorOf>
         </mirror>
     </mirrors>
