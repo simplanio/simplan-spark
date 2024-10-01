@@ -7,7 +7,7 @@ import com.intuit.data.simplan.spark.core.domain.operator.config.sinks.SparkStre
 import com.intuit.data.simplan.spark.core.domain.{SparkOperatorRequest, SparkOperatorResponse, TriggerModes}
 import com.intuit.data.simplan.spark.core.handlers.foreachbatch.ForEachBatchHandler
 import com.intuit.data.simplan.spark.core.operators.SparkOperator
-import org.apache.spark.sql.streaming.DataStreamWriter
+import org.apache.spark.sql.streaming.{DataStreamWriter, Trigger}
 import org.apache.spark.sql.{DataFrame, Row}
 
 /** @author Abraham, Thomas - tabraham1
@@ -35,7 +35,8 @@ abstract class AbstractStreamingSink(appContext: SparkAppContext, operatorContex
       .queryName(name)
       .format(operatorConfig.format)
       .outputMode(operatorConfig.resolvedOutputMode)
-      .trigger(TriggerModes(operatorConfig.resolvedTrigger.mode, operatorConfig.resolvedTrigger.interval))
+      .trigger(Trigger.AvailableNow())
+  //    .trigger(TriggerModes(operatorConfig.resolvedTrigger.mode, operatorConfig.resolvedTrigger.interval))
       .options(operatorConfig.options)
   }
 

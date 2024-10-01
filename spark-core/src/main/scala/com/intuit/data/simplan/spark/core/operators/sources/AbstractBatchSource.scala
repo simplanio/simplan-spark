@@ -29,11 +29,13 @@ abstract class AbstractBatchSource(sparkAppContext: SparkAppContext, operatorCon
     val resolvedTableName = operatorConfig.table.getOrElse(operatorContext.taskName)
     if (operatorConfig.tableType == TableType.TEMP)
       frame.createOrReplaceTempView(resolvedTableName)
-    else if(operatorConfig.tableType == TableType.MANAGED)
+    else if (operatorConfig.tableType == TableType.MANAGED)
       frame.createOrReplaceTempView(resolvedTableName)
     new SparkOperatorResponse(true, Map(operatorContext.taskName -> frame))
   }
   override def getJobDescription: String = super.getJobDescription + s"\nPath : $path"
+
+  def applyPreTransforamtion(dataFrame: DataFrame): DataFrame = dataFrame
 
   def loadBatchData: DataFrame = {
     val allOptions = defaultOptions ++ operatorConfig.resolvedOptions

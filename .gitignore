@@ -1,5 +1,5 @@
 *.class
-
+.workspace/
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 spark-launcher/src/main/resources/env.conf

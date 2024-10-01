@@ -65,7 +65,11 @@ abstract class AbstractStreamingSource(sparkAppContext: SparkAppContext, operato
 
     val payloadSchema: StructType = config.payloadSchema.get.resolveAs[StructType]
     config.format.toUpperCase match {
-      case "JSON" => dataframe.withColumn(PAYLOAD_COLUMN, from_json(col(PAYLOAD_COLUMN).cast(StringType), payloadSchema)) //.drop("value")
+      case "JSON" =>
+        val column = from_json(col(PAYLOAD_COLUMN).cast(StringType), payloadSchema)
+        val payloadColumns = payloadSchema.fields.map(field => col(s"${PAYLOAD_COLUMN}.${field.name}").as(field.name))
+        dataframe.schema.fields.map(_.name)
+        dataframe.withColumn(PAYLOAD_COLUMN, column) //.drop("value")
       case _      => dataframe
     }
   }
