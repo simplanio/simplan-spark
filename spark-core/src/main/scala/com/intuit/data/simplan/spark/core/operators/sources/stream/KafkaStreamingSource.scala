@@ -14,7 +14,7 @@ import org.apache.spark.sql.types.StructType
   */
 
 class KafkaStreamingSourceConfig(
-    val topic: String,
+    val subscribe: String,
     val format: String = "JSON",
     val payloadSchema: Option[QualifiedParam] = None,
     val options: Map[String, String]
