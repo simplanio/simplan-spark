@@ -12,8 +12,8 @@ class KVProjectionOperator(appContext: SparkAppContext, operatorContext: Operato
 
   override def process(request: SparkOperatorRequest): SparkOperatorResponse = {
     val sourceDataframe: DataFrame = request.dataframes(operatorConfig.source)
-    val columns = operatorConfig.projections.map(projection => col(projection._2).as(projection._1)).toList
-    val projectedDataframe = sourceDataframe.select(columns: _*)
+    val columns = operatorConfig.projections.map(projection => s"${projection._2} as ${projection._1}").toList
+    val projectedDataframe = sourceDataframe.selectExpr(columns: _*)
     SparkOperatorResponse(operatorContext.taskName, projectedDataframe)
   }
 }

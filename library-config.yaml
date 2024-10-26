@@ -17,9 +17,9 @@ githubCredentialsId: "github-svc-sbseg-ci"
 orgRepo: Simplan/simplan-spark
 
 CODECOV_CREDENTIALS: ibp-codecov-token
-SONAR_HOST: https://pub-sonarqube-ibp-prod-us-west-2-app.prod1-ibp.a.intuit.com/
+SONAR_HOST: https://sonarqube.tools-k8s.a.intuit.com/
 GITHUB_API: https://github.intuit.com/api/v3/
-
+sonarQubev9: true
 enableJiraTransition: false
 
 deploy_repo: github.intuit.com/Simplan/simplan-spark.git

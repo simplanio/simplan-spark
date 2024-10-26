@@ -5,7 +5,7 @@ import com.intuit.data.simplan.core.util.PartitionOptimizerResult
 import com.intuit.data.simplan.logging.Logging
 import com.intuit.data.simplan.spark.core.domain.operator.config.SparkRepartitionConfig
 import org.apache.spark.sql.functions.col
-import org.apache.spark.sql.{DataFrame, SparkSession}
+import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 
 import scala.util.Try
 
@@ -59,4 +59,10 @@ object DataframeUtils extends Logging {
       dataframe.printSchema()
       println(s"===== End : $heading ======")
     }
+
+  def rowToMap(row: Row): java.util.Map[String, AnyRef] = {
+    val map = new java.util.HashMap[String, AnyRef]()
+    row.schema.fieldNames.foreach(each => map.put(each, row.getAs(each).asInstanceOf[AnyRef]))
+    map
+  }
 }

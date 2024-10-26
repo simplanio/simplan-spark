@@ -35,7 +35,7 @@ abstract class AbstractStreamingSink(appContext: SparkAppContext, operatorContex
       .queryName(name)
       .format(operatorConfig.format)
       .outputMode(operatorConfig.resolvedOutputMode)
-      .trigger(Trigger.AvailableNow())
+      .trigger(Trigger.ProcessingTime(operatorConfig.resolvedTrigger.interval))
   //    .trigger(TriggerModes(operatorConfig.resolvedTrigger.mode, operatorConfig.resolvedTrigger.interval))
       .options(operatorConfig.options)
   }

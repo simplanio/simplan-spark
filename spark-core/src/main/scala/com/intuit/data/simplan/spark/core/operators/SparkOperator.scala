@@ -80,7 +80,7 @@ abstract class SparkOperator[T <: OperatorConfig](
   def computeMetricsIfDefined(response: SparkOperatorResponse): SparkOperatorResponse = {
     if (operatorOptions.metrics.isEmpty || !operatorOptions.metrics.get.isMetricsEnabled) return response
     val dataframe = response.dataframes.head._2
-    if (operatorOptions.cache.isEmpty || !operatorOptions.cache.get.enabled) dataframe.cache()
+  //  if (operatorOptions.cache.isEmpty || !operatorOptions.cache.get.enabled) dataframe.cache()
     val metricsConfig = operatorOptions.metrics.get
     val aggs: util.Map[String, Object] = new util.HashMap[String, Object]()
     if (metricsConfig.isCountEnabled) aggs.put("count", new java.lang.Long(dataframe.count()))
@@ -99,7 +99,7 @@ abstract class SparkOperator[T <: OperatorConfig](
     )
       .setEventData(aggs)
     appSupport.opsMetricsEmitter.info(opsEvent)
-    if (operatorOptions.cache.isEmpty || !operatorOptions.cache.get.enabled) dataframe.unpersist()
+   // if (operatorOptions.cache.isEmpty || !operatorOptions.cache.get.enabled) dataframe.unpersist()
     response
   }
 }

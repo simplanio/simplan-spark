@@ -25,7 +25,7 @@ class KafkaStreamingSource(
     operatorContext: OperatorContext
 ) extends SparkOperator[KafkaStreamingSourceConfig](sparkAppContext, operatorContext) {
 
-  val resolvedOptions: Map[String, String] = operatorConfig.options ++ Map("includeHeaders" -> "true")
+  val resolvedOptions: Map[String, String] = operatorConfig.options ++ Map("includeHeaders" -> "true", "subscribe" -> operatorConfig.subscribe)
 
   override def process(request: SparkOperatorRequest): SparkOperatorResponse = {
     val formatOptions = FormatOptions(operatorConfig.format, Option(operatorConfig.payloadSchema.get.resolveAs[StructType]))
