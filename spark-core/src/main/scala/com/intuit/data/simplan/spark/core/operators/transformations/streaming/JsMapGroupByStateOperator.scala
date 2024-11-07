@@ -20,7 +20,9 @@ import com.intuit.data.simplan.spark.core.domain.{JsStateData, SparkOperatorRequ
 import com.intuit.data.simplan.spark.core.javascript.JsStateHandler
 import com.intuit.data.simplan.spark.core.operators.SparkOperator
 import com.intuit.data.simplan.spark.core.utils.DataframeUtils
+import org.apache.spark.sql.functions._
 import org.apache.spark.sql.streaming.{GroupState, GroupStateTimeout, OutputMode}
+import org.apache.spark.sql.types.{DataTypes, StructField, StructType}
 import org.apache.spark.sql.{DataFrame, Encoders, Row}
 
 import scala.collection.JavaConverters._
@@ -38,20 +40,36 @@ case class MapGroupByStateOperatorConfig(source: String, groupBy: List[String], 
 case class StateKeysDefinition(counters: List[String] = List.empty, lists: List[String] = List.empty)
 case class JSStateRulesConfig(condition: String, action: String)
 
-class MapGroupByStateOperator(appContext: SparkAppContext, operatorContext: OperatorContext) extends SparkOperator[MapGroupByStateOperatorConfig](appContext, operatorContext) {
+class JsMapGroupByStateOperator(appContext: SparkAppContext, operatorContext: OperatorContext) extends SparkOperator[MapGroupByStateOperatorConfig](appContext, operatorContext) {
   val jsStateHandler = new JsStateHandler(SimplanMapGroupByStateContext(operatorContext, operatorConfig.groupBy, operatorConfig.stateHandler, operatorConfig.stateRules, operatorConfig))
   val jsStateHandlerBC = appContext.spark.sparkContext.broadcast(jsStateHandler)
 
   override def process(request: SparkOperatorRequest): SparkOperatorResponse = {
     val sourceDataframe: DataFrame = request.dataframes(operatorConfig.source)
     implicit val jsStateDataEncoder = Encoders.javaSerialization(classOf[JsStateData])
+    implicit val rowEncoder = Encoders.kryo[Row]
     import appContext.spark.implicits._
-    val stateCalculated = sourceDataframe
+
+    val structType: StructType = StructType(Array(
+      StructField("employeeCount", DataTypes.LongType, nullable = true),
+      StructField("intuitAccountId", DataTypes.StringType, nullable = true),
+      StructField("id", DataTypes.StringType, nullable = true),
+      StructField("timestamp", DataTypes.TimestampType, nullable = true)
+    ))
+
+    val stateCalculated: DataFrame = sourceDataframe
       .withWatermark("timestamp", "10 seconds")
       .groupByKey(row => operatorConfig.groupBy.map(each => row.getAs(each).toString))
-      .flatMapGroupsWithState(OutputMode.Update(), GroupStateTimeout.NoTimeout())(stateUpdateFunctionMapGroupsWithState)
-    stateCalculated.printSchema()
-    SparkOperatorResponse.continue(operatorContext.taskName, stateCalculated.toDF())
+      .flatMapGroupsWithState(OutputMode.Append(), GroupStateTimeout.ProcessingTimeTimeout())(stateUpdateFunctionMapGroupsWithState)
+      .withColumn("val1", from_json(col("value"), structType))
+      .select("val1.*")
+//      .withWatermark("timestamp", "50 seconds")
+//      .groupBy(window($"timestamp", "10 seconds"), $"intuitAccountId")
+//      .agg(
+//        max("employeeCount").as("employeeCount")
+//      )
+
+    SparkOperatorResponse.continue(operatorContext.taskName, stateCalculated)
   }
 
   def initialState(): JsStateData = {
@@ -72,7 +90,7 @@ class MapGroupByStateOperator(appContext: SparkAppContext, operatorContext: Oper
 
 }
 
-object MapGroupByStateOperator {
+object JsMapGroupByStateOperator {
 
   def getFieldSource(fieldName: String, row: Row, stateKeys: StateKeysDefinition): StateFieldSource = {
     if (row.schema.fields.map(_.name).contains(fieldName)) StateFieldSource.INPUT

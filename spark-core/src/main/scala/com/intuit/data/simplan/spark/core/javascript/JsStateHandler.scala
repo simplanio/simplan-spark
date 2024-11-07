@@ -17,7 +17,7 @@ package com.intuit.data.simplan.spark.core.javascript
 import com.intuit.data.simplan.common.scripting.js.{JSFunctions, SimplanJavaScriptScripting}
 import com.intuit.data.simplan.global.utils.SimplanImplicits._
 import com.intuit.data.simplan.spark.core.domain.{JsStateData, StateFieldSource}
-import com.intuit.data.simplan.spark.core.operators.transformations.streaming.{MapGroupByStateOperator, SimplanMapGroupByStateContext}
+import com.intuit.data.simplan.spark.core.operators.transformations.streaming.{JsMapGroupByStateOperator, SimplanMapGroupByStateContext}
 import org.apache.spark.sql.Row
 
 import java.lang
@@ -43,7 +43,7 @@ class JsStateHandler(val context: SimplanMapGroupByStateContext) extends Seriali
   def constructReturnRow(inputRow: Row, stateData: JsStateData): String = {
     val data = mutable.Map[String, AnyRef]()
     context.operatorConfig.returns.foreach(returnField => {
-      val fieldSource = MapGroupByStateOperator.getFieldSource(returnField, inputRow, context.operatorConfig.stateKeys)
+      val fieldSource = JsMapGroupByStateOperator.getFieldSource(returnField, inputRow, context.operatorConfig.stateKeys)
       val fieldValue: AnyRef = fieldSource match {
         case StateFieldSource.INPUT   => Try(inputRow.getAs[AnyRef](returnField)).getOrElse(null)
         case StateFieldSource.LIST    => Try(stateData.getLists.get(returnField)).getOrElse(List.empty[String])
