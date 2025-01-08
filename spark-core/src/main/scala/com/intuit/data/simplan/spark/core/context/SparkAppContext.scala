@@ -1,6 +1,7 @@
 package com.intuit.data.simplan.spark.core.context
 
 import com.intuit.data.simplan.common.files.FileUtils
+import com.intuit.data.simplan.core.aws.AmazonS3FileUtils
 import com.intuit.data.simplan.core.context.{AppContext, InitContext}
 import com.intuit.data.simplan.global.qualifiedstring.QualifiedParameterManager
 import com.intuit.data.simplan.spark.core.config.SparkSystemConfiguration
@@ -58,7 +59,7 @@ class SparkAppContext(val initContext: InitContext) extends AppContext(initConte
   }
 
   lazy val sc: SparkContext = spark.sparkContext
-  override lazy val fileUtils: FileUtils = new SparkFileUtils(spark)
+  override lazy val fileUtils: FileUtils = AmazonS3FileUtils.create()
 }
 
 object SparkAppContext {
