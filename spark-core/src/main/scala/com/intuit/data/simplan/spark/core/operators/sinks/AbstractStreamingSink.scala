@@ -1,7 +1,9 @@
 package com.intuit.data.simplan.spark.core.operators.sinks
 
+import com.intuit.data.simplan.core.domain.SinkLocationType
 import com.intuit.data.simplan.core.domain.operator.OperatorContext
 import com.intuit.data.simplan.global.utils.SimplanImplicits.{Pipe, ToJsonImplicits}
+import com.intuit.data.simplan.logging.Logging
 import com.intuit.data.simplan.spark.core.context.SparkAppContext
 import com.intuit.data.simplan.spark.core.domain.operator.config.sinks.SparkStreamingSinkConfig
 import com.intuit.data.simplan.spark.core.domain.{SparkOperatorRequest, SparkOperatorResponse, TriggerModes}
@@ -11,10 +13,10 @@ import org.apache.spark.sql.streaming.{DataStreamWriter, Trigger}
 import org.apache.spark.sql.{DataFrame, Row}
 
 /** @author Abraham, Thomas - tabraham1
-  *         Created on 17-Sep-2021 at 3:48 PM
-  */
+ *          Created on 17-Sep-2021 at 3:48 PM
+ */
 
-abstract class AbstractStreamingSink(appContext: SparkAppContext, operatorContext: OperatorContext) extends SparkOperator[SparkStreamingSinkConfig](appContext, operatorContext) {
+abstract class AbstractStreamingSink(appContext: SparkAppContext, operatorContext: OperatorContext) extends SparkOperator[SparkStreamingSinkConfig](appContext, operatorContext) with Logging {
 
   override implicit lazy val operatorConfig: SparkStreamingSinkConfig = customizeConfig(operatorContext.parseConfigAs[SparkStreamingSinkConfig])
 
@@ -22,21 +24,24 @@ abstract class AbstractStreamingSink(appContext: SparkAppContext, operatorContex
     val frame = request.dataframes(operatorConfig.source)
     val transformedDF = customiseSinkTransformation(frame)
     implicit val operatorRequest: SparkOperatorRequest = request
-    val streamingQuery = streamSinkInit(transformedDF, operatorContext.taskName)
+    val dataStreamWriter: DataStreamWriter[Row] = streamSinkInit(transformedDF, operatorContext.taskName)
       .pipe(applyForEachBatch)
-      .start()
+    val streamingQuery = if (operatorConfig.locationType.isDefined && operatorConfig.locationType.get == SinkLocationType.PATH)
+      dataStreamWriter.option("path", operatorConfig.location).start()
+    else dataStreamWriter.toTable(operatorConfig.location)
     if (operatorConfig.awaitTermination) streamingQuery.awaitTermination()
 
     SparkOperatorResponse.continue
   }
 
   def streamSinkInit(dataframe: DataFrame, name: String): DataStreamWriter[Row] = {
+    val trigger = TriggerModes(operatorConfig.resolvedTrigger.mode, operatorConfig.resolvedTrigger.interval)
+    logger.debug(s"Trigger for ${operatorContext.taskName}: $trigger")
     dataframe.writeStream
       .queryName(name)
       .format(operatorConfig.format)
       .outputMode(operatorConfig.resolvedOutputMode)
-      .trigger(Trigger.ProcessingTime(operatorConfig.resolvedTrigger.interval))
-  //    .trigger(TriggerModes(operatorConfig.resolvedTrigger.mode, operatorConfig.resolvedTrigger.interval))
+      .trigger(trigger)
       .options(operatorConfig.options)
   }
 
@@ -49,6 +54,7 @@ abstract class AbstractStreamingSink(appContext: SparkAppContext, operatorContex
   }
 
   def customizeConfig(readerConfig: SparkStreamingSinkConfig): SparkStreamingSinkConfig = readerConfig
+
   def customiseSinkTransformation(dataFrame: DataFrame): DataFrame = dataFrame
 
 }

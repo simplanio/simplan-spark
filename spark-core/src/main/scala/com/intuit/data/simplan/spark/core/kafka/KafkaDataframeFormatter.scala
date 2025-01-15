@@ -19,13 +19,13 @@ package com.intuit.data.simplan.spark.core.kafka
 
 import com.intuit.data.simplan.core.domain.StreamingParseMode.{ALL_PARSED, HEADER_ONLY, PAYLOAD_ONLY}
 import com.intuit.data.simplan.global.utils.SimplanImplicits.Pipe
-import org.apache.spark.sql.functions.{col, from_json, struct}
+import org.apache.spark.sql.functions.{col, current_timestamp, from_json, struct}
 import org.apache.spark.sql.types.StringType
 import org.apache.spark.sql.{Column, DataFrame}
 
 /** @author Abraham, Thomas - tabraham1
-  *         Created on 20-Sep-2024 at 11:59 AM
-  */
+ *          Created on 20-Sep-2024 at 11:59 AM
+ */
 
 object KafkaDataframeFormatter {
   val PARSED_PAYLOAD_COLUMN = "__event_payload_parsed"
@@ -36,20 +36,23 @@ object KafkaDataframeFormatter {
     implicit val formatingOptions: FormatOptions = formatOptions
     dataFrame
       .pipe(applyInitialCleanup)
-      //.pipe(parseHeader)
       .pipe(parsePayload)
-      //     .pipe(applyParseMode)
+    //  .withColumn("__source_recorded_timestamp",col("server_enrichment.session.derived_timestamp"))
       .pipe(applyFinalCleanup)
   }
 
   private def applyInitialCleanup(dataframe: DataFrame): DataFrame = {
-    val prefix = "__meta."
-    val fields = dataframe.schema.fields.map(_.name).filter(_ != "headers").filter(_ != "value")
+    val valuesToKeep = List("headers", "value")
+    val fields = dataframe.schema.fields.map(_.name).filterNot(valuesToKeep.contains)
     val renamedDataframe = dataframe.withColumn("__meta", struct(fields.map(col): _*)).drop(fields: _*)
 
     renamedDataframe
       .withColumnRenamed("value", RAW_PAYLOAD_COLUMN)
       .withColumnRenamed("headers", HEADER_COLUMN)
+      .withColumn("__created_at", col("__meta.timestamp"))
+      .withColumn("__updated_at", col("__meta.timestamp"))
+      .withColumn("__partition", col("__meta.partition"))
+      .drop("__meta")
   }
 
   private def applyFinalCleanup(dataframe: DataFrame)(implicit config: FormatOptions): DataFrame = {
@@ -66,15 +69,6 @@ object KafkaDataframeFormatter {
         dataframe
           .withColumn(PARSED_PAYLOAD_COLUMN, column)
       case _ => dataframe
-    }
-  }
-
-  private def applyParseMode(dataframe: DataFrame)(implicit config: FormatOptions): DataFrame = {
-    config.RESOLVED_PARSE_MODE match {
-      case PAYLOAD_ONLY => dataframe.select(s"$PARSED_PAYLOAD_COLUMN.*")
-      case HEADER_ONLY  => dataframe.select(s"$HEADER_COLUMN.*")
-      case ALL_PARSED   => dataframe.drop("headersRaw")
-      case _            => dataframe
     }
   }
 }
