@@ -1,6 +1,6 @@
 #When building in local machine or in jenkins in a branch != master, artifactVersion value will be 1.0.0-SNAPSHOT
 artifactVersion: 0.2.4
-simplanFrameworkVersion: 0.5.2.30
+simplanFrameworkVersion: 0.5.2.31
 
 asset_id: 5479772439537201295
 asset_alias: Intuit.simplan.simplanspark
