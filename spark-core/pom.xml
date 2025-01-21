@@ -52,6 +52,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk</artifactId>
+            <version>1.11.682</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.scalatest</groupId>
             <artifactId>scalatest_${scala.minor.version}</artifactId>
             <version>3.2.11</version>
