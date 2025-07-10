@@ -50,13 +50,22 @@ object KafkaProducerSparkApp extends App {
       val headers: lang.Iterable[Header] = events.headers.map(each => new RecordHeader(each._1, each._2.getBytes).asInstanceOf[Header]).asJava
       val producerRecord = new ProducerRecord[String, String](TOPIC, null, key, value, headers)
       val metadata = producer.send(producerRecord)
-      printf(
+      // Fix: Explicitly call scala.Console.printf to use the standard Scala printf
+      scala.Console.printf(
         s"sent record(key=%s) " +
           "meta(partition=%d, offset=%d)\n",
-        producerRecord.key(),
-        metadata.get().partition(),
-        metadata.get().offset())
+        producerRecord.key(),        // This is a String
+        metadata.get().partition(),  // This is an Int
+        metadata.get().offset())     // This is a Long
     })
+    //    Error: Calling SparkSQL printf so getting error
+    //      printf(
+    //        s"sent record(key=%s) " +
+    //          "meta(partition=%d, offset=%d)\n",
+    //        producerRecord.key(),
+    //        metadata.get().partition(),
+    //        metadata.get().offset())
+    //    })
   } catch {
     case e: Exception => e.printStackTrace()
   } finally {
