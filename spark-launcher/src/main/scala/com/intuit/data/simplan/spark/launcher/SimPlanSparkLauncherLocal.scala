@@ -4,7 +4,7 @@ import com.intuit.data.simplan.spark.core.context.SparkAppContext
 import com.intuit.data.simplan.spark.core.service.SparkApplication
 
 /** @author Abraham, Thomas - tabraham1
-  *         Created on 06-Oct-2021 at 12:58 AM
+  *         Created on 06-Oct-2021 at 12:58 AMq
   */
 object SimPlanSparkLauncherLocal extends App {
 

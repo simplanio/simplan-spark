@@ -50,12 +50,8 @@ object KafkaProducerSparkApp extends App {
       val headers: lang.Iterable[Header] = events.headers.map(each => new RecordHeader(each._1, each._2.getBytes).asInstanceOf[Header]).asJava
       val producerRecord = new ProducerRecord[String, String](TOPIC, null, key, value, headers)
       val metadata = producer.send(producerRecord)
-      printf(
-        s"sent record(key=%s) " +
-          "meta(partition=%d, offset=%d)\n",
-        producerRecord.key(),
-        metadata.get().partition(),
-        metadata.get().offset())
+      println(
+        s"sent record(key=${producerRecord.key()}) meta(partition=${metadata.get().partition()}, offset=${metadata.get().offset()})")
     })
   } catch {
     case e: Exception => e.printStackTrace()

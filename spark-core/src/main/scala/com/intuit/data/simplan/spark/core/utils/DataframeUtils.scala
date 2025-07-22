@@ -89,7 +89,9 @@ object DataframeUtils extends Logging {
   }
 
   def getPartitionColumns(tableName: String)(implicit spark: SparkSession): Array[String] = {
-    val describeResult = spark.sql(s"DESCRIBE FORMATTED $tableName").collect()
+    val describeTableQuery = s"DESCRIBE FORMATTED $tableName"
+    logger.info(s"Fetching partition columns for table $tableName using query : $describeTableQuery")
+    val describeResult = spark.sql(describeTableQuery).collect()
     // Extract the partition columns
     Try(describeResult
       .dropWhile(row => !row.getString(0).contains("# Partition Information"))
@@ -104,14 +106,18 @@ object DataframeUtils extends Logging {
 
   def getPartitionInformation(tableName: String, partitionSpec: Map[String, String] = Map.empty)(implicit spark: SparkSession): Try[DataFrame] = {
     Try {
+      logger.info(s"Fetching partition information for table $tableName with partitionSpec ${partitionSpec.mkString(",")}")
       val partitionColumns = getPartitionColumns(tableName)
+      logger.info(s"Partition columns for table $tableName are ${partitionColumns.mkString(",")}")
       val partitionSpecSqlSection = partitionColumns match {
         case _ if partitionColumns nonEmpty =>
           val partitionSpecString = partitionSpec.map { case (key, value) => s"$key='$value'" }.mkString(", ")
           "PARTITION (" + partitionSpecString + ")"
         case _ => ""
       }
-      val partitionDf = spark.sql(s"""SHOW PARTITIONS $tableName $partitionSpecSqlSection""")
+      val showPartitionQuery = s"""SHOW PARTITIONS $tableName $partitionSpecSqlSection"""
+      logger.info(s"Fetching partition information for table $tableName using query : $showPartitionQuery")
+      val partitionDf = spark.sql(showPartitionQuery)
       partitionColumns.foldLeft(partitionDf)((df, each) => df.withColumn(each, getPartitionColumnValueUdf(col("partition"), lit(each))))
     }
   }
