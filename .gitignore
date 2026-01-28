@@ -66,3 +66,4 @@ project/
 spark-launcher/src/main/resources/test*
 flink-launcher/src/main/resources/test*
 *.flattened-pom.xml
+WARP.md

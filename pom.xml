@@ -21,7 +21,8 @@
 
     <properties>
         <revision>1.0.0-SNAPSHOT</revision>
-        <simplan-framework.version>0.5.2.35</simplan-framework.version>
+        <!--         TODO: need revert-->
+        <simplan-framework.version>1.0.0-SNAPSHOT</simplan-framework.version>
         <scala.version>2.12.4</scala.version>
         <environmentScope>compile</environmentScope>
         <scala.minor.version>2.12</scala.minor.version>

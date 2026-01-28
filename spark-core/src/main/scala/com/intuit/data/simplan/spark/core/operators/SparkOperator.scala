@@ -13,6 +13,7 @@ import com.intuit.data.simplan.spark.core.utils.{DataframeUtils, StorageLevelUti
 
 import java.{lang, util}
 import scala.reflect.ClassTag
+import scala.util.Try
 
 /** @author - Abraham, Thomas - tabaraham1
   *         Created on 8/19/21 at 1:42 PM
@@ -30,7 +31,8 @@ abstract class SparkOperator[T <: OperatorConfig](
     else SparkOperatorOptionConfig()
 
   override def process(request: OperatorRequest): OperatorResponse = {
-    appSupport.spark.sparkContext.setJobGroup(getJobGroup, getJobDescription)
+Try(appSupport.spark.sparkContext.setJobGroup(getJobGroup, getJobDescription))
+
     //If retries are not allowed for this operator processInternal and return
     if (!settings.allowRetries) return processInternal(request)
     operatorOptions.retry match {
@@ -47,7 +49,7 @@ abstract class SparkOperator[T <: OperatorConfig](
       .pipe(response => if (settings.allowRepartition) doRepartitioningIfDefined(response) else response)
       .pipe(response => if (settings.allowCaching) doCachingIfDefined(response) else response)
       .pipe(response => if (settings.allowMetrics) computeMetricsIfDefined(response) else response)
-    appSupport.spark.sparkContext.clearJobGroup()
+    Try(appSupport.spark.sparkContext.clearJobGroup())
     response
   }
 
