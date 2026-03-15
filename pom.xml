@@ -23,7 +23,7 @@
         <revision>1.0.0-SNAPSHOT</revision>
         <!--         TODO: need revert-->
         <simplan-framework.version>1.0.0-SNAPSHOT</simplan-framework.version>
-        <scala.version>2.12.4</scala.version>
+        <scala.version>2.12.18</scala.version>
         <environmentScope>compile</environmentScope>
         <scala.minor.version>2.12</scala.minor.version>
         <spark.version>3.5.1</spark.version>
@@ -50,6 +50,8 @@
 
         <scoverage.plugin.version>1.4.11</scoverage.plugin.version>
 
+        <!-- Empty by default (Java 8). Overridden by java17+ profile. -->
+        <spark.test.jvmArgs></spark.test.jvmArgs>
 
     </properties>
 
@@ -113,6 +115,59 @@
     </dependencyManagement>
 
     <profiles>
+        <!-- Auto-activates on JDK 9+ to add add-opens flags required by Spark -->
+        <profile>
+            <id>java17</id>
+            <activation>
+                <jdk>[9,)</jdk>
+            </activation>
+            <properties>
+                <spark.test.jvmArgs>
+                    --add-opens=java.base/java.lang=ALL-UNNAMED
+                    --add-opens=java.base/java.lang.invoke=ALL-UNNAMED
+                    --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+                    --add-opens=java.base/java.io=ALL-UNNAMED
+                    --add-opens=java.base/java.net=ALL-UNNAMED
+                    --add-opens=java.base/java.nio=ALL-UNNAMED
+                    --add-opens=java.base/java.util=ALL-UNNAMED
+                    --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+                    --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED
+                    --add-opens=java.base/sun.nio.ch=ALL-UNNAMED
+                    --add-opens=java.base/sun.nio.cs=ALL-UNNAMED
+                    --add-opens=java.base/sun.security.action=ALL-UNNAMED
+                    --add-opens=java.base/sun.util.calendar=ALL-UNNAMED
+                    --add-opens=java.security.jgss/sun.security.krb5=ALL-UNNAMED
+                </spark.test.jvmArgs>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>net.alchim31.maven</groupId>
+                        <artifactId>scala-maven-plugin</artifactId>
+                        <configuration>
+                            <jvmArgs>
+                                <jvmArg>-Xms128m</jvmArg>
+                                <jvmArg>-Xmx1024m</jvmArg>
+                                <jvmArg>--add-opens=java.base/java.lang=ALL-UNNAMED</jvmArg>
+                                <jvmArg>--add-opens=java.base/java.lang.invoke=ALL-UNNAMED</jvmArg>
+                                <jvmArg>--add-opens=java.base/java.lang.reflect=ALL-UNNAMED</jvmArg>
+                                <jvmArg>--add-opens=java.base/java.io=ALL-UNNAMED</jvmArg>
+                                <jvmArg>--add-opens=java.base/java.net=ALL-UNNAMED</jvmArg>
+                                <jvmArg>--add-opens=java.base/java.nio=ALL-UNNAMED</jvmArg>
+                                <jvmArg>--add-opens=java.base/java.util=ALL-UNNAMED</jvmArg>
+                                <jvmArg>--add-opens=java.base/java.util.concurrent=ALL-UNNAMED</jvmArg>
+                                <jvmArg>--add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED</jvmArg>
+                                <jvmArg>--add-opens=java.base/sun.nio.ch=ALL-UNNAMED</jvmArg>
+                                <jvmArg>--add-opens=java.base/sun.nio.cs=ALL-UNNAMED</jvmArg>
+                                <jvmArg>--add-opens=java.base/sun.security.action=ALL-UNNAMED</jvmArg>
+                                <jvmArg>--add-opens=java.base/sun.util.calendar=ALL-UNNAMED</jvmArg>
+                                <jvmArg>--add-opens=java.security.jgss/sun.security.krb5=ALL-UNNAMED</jvmArg>
+                            </jvmArgs>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>upload-artifact</id>
             <distributionManagement>
@@ -163,7 +218,7 @@
             <plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
-                <version>3.2.2</version>
+                <version>4.9.2</version>
                 <configuration>
                     <scalaCompatVersion>${scala.minor.version}</scalaCompatVersion>
                     <scalaVersion>${scala.version}</scalaVersion>
@@ -211,6 +266,7 @@
                     <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
                     <junitxml>.</junitxml>
                     <filereports>WDF TestSuite.txt</filereports>
+                    <argLine>${spark.test.jvmArgs}</argLine>
                 </configuration>
                 <executions>
                     <execution>

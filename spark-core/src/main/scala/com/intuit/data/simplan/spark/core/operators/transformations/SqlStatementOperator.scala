@@ -18,8 +18,8 @@ class SqlStatementOperator(appContext: SparkAppContext, operatorContext: Operato
 
     logger.info(s"Executing SQL Statement Operator : ${operatorContext.taskName} : ${operatorConfig.sql}")
 
-
-    val frame: DataFrame = appContext.spark.sql(operatorConfig.sql)
+    val sql = s"-- Query_ID: {index}\n ${operatorConfig.sql}"
+    val frame: DataFrame = appContext.spark.sql(sql)
     operatorConfig.tableType match {
       case TableType.TEMP    => frame.createOrReplaceTempView(operatorConfig.table.getOrElse(operatorContext.taskName))
       case TableType.MANAGED => frame.write.format(operatorConfig.resolvedTableFormat).saveAsTable(operatorConfig.table.getOrElse(operatorContext.taskName))
