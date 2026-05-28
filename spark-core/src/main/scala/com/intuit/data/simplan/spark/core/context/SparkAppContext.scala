@@ -18,6 +18,7 @@ import scala.util.Try
   *         Created on 8/19/21 at 1:21 AM
   */
 class SparkAppContext(val initContext: InitContext) extends AppContext(initContext) {
+  final private val SPARK_APP_ID_CONST="spark.app.id"
   private lazy val logger = LoggerFactory.getLogger(classOf[SparkAppContext])
   def this(configs: Array[String]) = this(InitContext(userConfigs = configs))
   addDefaultAppContextConfigFile("spark-operator-mappings.conf")
@@ -25,7 +26,7 @@ class SparkAppContext(val initContext: InitContext) extends AppContext(initConte
   QualifiedParameterManager.registerHandler(new DDLSchemaQualifiedParamHandler)
   QualifiedParameterManager.registerHandler(new JsonSchemaQualifiedParamHandler)
 
-  override lazy val applicationId: String = spark.conf.get("spark.app.id")
+  override lazy val applicationId: String = spark.conf.get(SPARK_APP_ID_CONST)
 
   private lazy val sparkSystemConfiguration: SparkSystemConfiguration = appContextConfig.getSystemConfigAs[SparkSystemConfiguration]("spark")
 
@@ -46,7 +47,7 @@ class SparkAppContext(val initContext: InitContext) extends AppContext(initConte
     registerCustomUDFs(session)
     session
   }
-  initContext.overrideAnyConfig("simplan.application.runId", ConfigValueFactory.fromAnyRef(spark.conf.get("spark.app.id")))
+  initContext.overrideAnyConfig("simplan.application.runId", ConfigValueFactory.fromAnyRef(spark.conf.get(SPARK_APP_ID_CONST)))
 //  StreamMonitoring(this).attachMonitoringListener()
 
   private def registerCustomUDFs(spark: SparkSession): Unit = {
@@ -58,8 +59,9 @@ class SparkAppContext(val initContext: InitContext) extends AppContext(initConte
           spark.sql(functionDefinition)
       }
   }
-// Need to test, tested by commenting var but not with Try approach
-  lazy val sc = Try(spark.sparkContext).getOrElse(null)
+  lazy val sc =  if(Try(spark.getClass.getMethod("sparkContext")).isSuccess){
+    spark.sparkContext
+  } else null
   override lazy val fileUtils: FileUtils = AmazonS3FileUtils.create()
 }
 

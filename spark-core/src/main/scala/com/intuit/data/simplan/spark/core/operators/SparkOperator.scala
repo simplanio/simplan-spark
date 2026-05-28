@@ -31,7 +31,10 @@ abstract class SparkOperator[T <: OperatorConfig](
     else SparkOperatorOptionConfig()
 
   override def process(request: OperatorRequest): OperatorResponse = {
-Try(appSupport.spark.sparkContext.setJobGroup(getJobGroup, getJobDescription))
+    // This is for FGAC uses cases in DBX env
+    if(Try(appSupport.spark.getClass.getMethod("sparkContext")).isSuccess){
+      appSupport.spark.sparkContext.setJobGroup(getJobGroup, getJobDescription)
+    }
 
     //If retries are not allowed for this operator processInternal and return
     if (!settings.allowRetries) return processInternal(request)
@@ -49,7 +52,10 @@ Try(appSupport.spark.sparkContext.setJobGroup(getJobGroup, getJobDescription))
       .pipe(response => if (settings.allowRepartition) doRepartitioningIfDefined(response) else response)
       .pipe(response => if (settings.allowCaching) doCachingIfDefined(response) else response)
       .pipe(response => if (settings.allowMetrics) computeMetricsIfDefined(response) else response)
-    Try(appSupport.spark.sparkContext.clearJobGroup())
+    // This is for FGAC uses cases in DBX env
+    if(Try(appSupport.spark.getClass.getMethod("sparkContext")).isSuccess){
+      appSupport.spark.sparkContext.clearJobGroup()
+    }
     response
   }
 

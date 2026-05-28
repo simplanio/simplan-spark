@@ -1,0 +1,264 @@
+{
+    "version": "1.4.0",
+    "project": {
+        "name": "simplan-spark-parent",
+        "directory": "/Users/dyelluri1/workspace/simplan/spark/simplan-spark",
+        "workspaceDir": "/Users/dyelluri1/workspace/simplan/spark/simplan-spark",
+        "sources": [
+            "/Users/dyelluri1/workspace/simplan/spark/simplan-spark/src/main/java",
+            "/Users/dyelluri1/workspace/simplan/spark/simplan-spark/src/main/scala"
+        ],
+        "dependencies": [
+            
+        ],
+        "classpath": [
+            "/Users/dyelluri1/workspace/simplan/spark/simplan-spark/target/classes",
+            "/Users/dyelluri1/.m2/repository/org/apache/commons/commons-text/1.10.0/commons-text-1.10.0.jar",
+            "/Users/dyelluri1/.m2/repository/org/apache/commons/commons-lang3/3.12.0/commons-lang3-3.12.0.jar",
+            "/Users/dyelluri1/.m2/repository/org/scala-lang/scala-library/2.12.4/scala-library-2.12.4.jar",
+            "/Users/dyelluri1/.m2/repository/org/scala-lang/scala-library/2.12.4/scala-library-2.12.4.jar"
+        ],
+        "out": "/Users/dyelluri1/workspace/simplan/spark/simplan-spark/target",
+        "classesDir": "/Users/dyelluri1/workspace/simplan/spark/simplan-spark/target/classes",
+        "resources": [
+            "/Users/dyelluri1/workspace/simplan/spark/simplan-spark/src/main/resources"
+        ],
+        "scala": {
+            "organization": "org.scala-lang",
+            "name": "scala-compiler",
+            "version": "2.12.4",
+            "options": [
+                "-Xmacro-settings:materialize-derivations",
+                "-target:jvm-1.8"
+            ],
+            "jars": [
+                "/Users/dyelluri1/.m2/repository/jline/jline/2.14.5/jline-2.14.5.jar",
+                "/Users/dyelluri1/.m2/repository/org/scala-lang/modules/scala-xml_2.12/1.0.6/scala-xml_2.12-1.0.6.jar",
+                "/Users/dyelluri1/.m2/repository/org/scala-lang/scala-library/2.12.4/scala-library-2.12.4.jar",
+                "/Users/dyelluri1/.m2/repository/org/scala-lang/scala-reflect/2.12.4/scala-reflect-2.12.4.jar",
+                "/Users/dyelluri1/.m2/repository/org/scala-lang/scala-compiler/2.12.4/scala-compiler-2.12.4.jar"
+            ],
+            "setup": {
+                "order": "mixed",
+                "addLibraryToBootClasspath": true,
+                "addCompilerToClasspath": false,
+                "addExtraJarsToClasspath": false,
+                "manageBootClasspath": true,
+                "filterLibraryFromClasspath": true
+            }
+        },
+        "java": {
+            "options": [
+                "-g",
+                "-target",
+                "1.8",
+                "-source",
+                "1.8",
+                "-encoding",
+                "UTF-8"
+            ]
+        },
+        "test": {
+            "frameworks": [
+                {
+                    "names": [
+                        "com.novocode.junit.JUnitFramework"
+                    ]
+                },
+                {
+                    "names": [
+                        "org.scalatest.tools.Framework",
+                        "org.scalatest.tools.ScalaTestFramework"
+                    ]
+                },
+                {
+                    "names": [
+                        "org.scalacheck.ScalaCheckFramework"
+                    ]
+                },
+                {
+                    "names": [
+                        "org.specs.runner.SpecsFramework",
+                        "org.specs2.runner.Specs2Framework",
+                        "org.specs2.runner.SpecsFramework"
+                    ]
+                },
+                {
+                    "names": [
+                        "utest.runner.Framework"
+                    ]
+                },
+                {
+                    "names": [
+                        "munit.Framework"
+                    ]
+                }
+            ],
+            "options": {
+                "excludes": [
+                    
+                ],
+                "arguments": [
+                    {
+                        "args": [
+                            "-v",
+                            "-a"
+                        ],
+                        "framework": {
+                            "names": [
+                                "com.novocode.junit.JUnitFramework"
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "platform": {
+            "name": "jvm",
+            "config": {
+                "home": "/Users/dyelluri1/.sdkman/candidates/java/21.0.7-graal",
+                "options": [
+                    
+                ]
+            },
+            "mainClass": [
+                
+            ]
+        },
+        "resolution": {
+            "modules": [
+                {
+                    "organization": "org.scalactic",
+                    "name": "scalactic_2.12",
+                    "version": "3.0.4",
+                    "artifacts": [
+                        {
+                            "name": "scalactic_2.12",
+                            "path": "/Users/dyelluri1/.m2/repository/org/scalactic/scalactic_2.12/3.0.4/scalactic_2.12-3.0.4.jar"
+                        },
+                        {
+                            "name": "scalactic_2.12",
+                            "classifier": "sources",
+                            "path": "/Users/dyelluri1/.m2/repository/org/scalactic/scalactic_2.12/3.0.4/scalactic_2.12-3.0.4-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scala-lang.modules",
+                    "name": "scala-parser-combinators_2.12",
+                    "version": "1.1.2",
+                    "artifacts": [
+                        {
+                            "name": "scala-parser-combinators_2.12",
+                            "path": "/Users/dyelluri1/.m2/repository/org/scala-lang/modules/scala-parser-combinators_2.12/1.1.2/scala-parser-combinators_2.12-1.1.2.jar"
+                        },
+                        {
+                            "name": "scala-parser-combinators_2.12",
+                            "classifier": "sources",
+                            "path": "/Users/dyelluri1/.m2/repository/org/scala-lang/modules/scala-parser-combinators_2.12/1.1.2/scala-parser-combinators_2.12-1.1.2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scala-lang",
+                    "name": "scala-reflect",
+                    "version": "2.12.3",
+                    "artifacts": [
+                        {
+                            "name": "scala-reflect",
+                            "path": "/Users/dyelluri1/.m2/repository/org/scala-lang/scala-reflect/2.12.3/scala-reflect-2.12.3.jar"
+                        },
+                        {
+                            "name": "scala-reflect",
+                            "classifier": "sources",
+                            "path": "/Users/dyelluri1/.m2/repository/org/scala-lang/scala-reflect/2.12.3/scala-reflect-2.12.3-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scala-lang",
+                    "name": "scala-library",
+                    "version": "2.12.4",
+                    "artifacts": [
+                        {
+                            "name": "scala-library",
+                            "path": "/Users/dyelluri1/.m2/repository/org/scala-lang/scala-library/2.12.4/scala-library-2.12.4.jar"
+                        },
+                        {
+                            "name": "scala-library",
+                            "classifier": "sources",
+                            "path": "/Users/dyelluri1/.m2/repository/org/scala-lang/scala-library/2.12.4/scala-library-2.12.4-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.commons",
+                    "name": "commons-text",
+                    "version": "1.10.0",
+                    "artifacts": [
+                        {
+                            "name": "commons-text",
+                            "path": "/Users/dyelluri1/.m2/repository/org/apache/commons/commons-text/1.10.0/commons-text-1.10.0.jar"
+                        },
+                        {
+                            "name": "commons-text",
+                            "classifier": "sources",
+                            "path": "/Users/dyelluri1/.m2/repository/org/apache/commons/commons-text/1.10.0/commons-text-1.10.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.commons",
+                    "name": "commons-lang3",
+                    "version": "3.12.0",
+                    "artifacts": [
+                        {
+                            "name": "commons-lang3",
+                            "path": "/Users/dyelluri1/.m2/repository/org/apache/commons/commons-lang3/3.12.0/commons-lang3-3.12.0.jar"
+                        },
+                        {
+                            "name": "commons-lang3",
+                            "classifier": "sources",
+                            "path": "/Users/dyelluri1/.m2/repository/org/apache/commons/commons-lang3/3.12.0/commons-lang3-3.12.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scala-lang.modules",
+                    "name": "scala-xml_2.12",
+                    "version": "1.0.5",
+                    "artifacts": [
+                        {
+                            "name": "scala-xml_2.12",
+                            "path": "/Users/dyelluri1/.m2/repository/org/scala-lang/modules/scala-xml_2.12/1.0.5/scala-xml_2.12-1.0.5.jar"
+                        },
+                        {
+                            "name": "scala-xml_2.12",
+                            "classifier": "sources",
+                            "path": "/Users/dyelluri1/.m2/repository/org/scala-lang/modules/scala-xml_2.12/1.0.5/scala-xml_2.12-1.0.5-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scalatest",
+                    "name": "scalatest_2.12",
+                    "version": "3.0.4",
+                    "artifacts": [
+                        {
+                            "name": "scalatest_2.12",
+                            "path": "/Users/dyelluri1/.m2/repository/org/scalatest/scalatest_2.12/3.0.4/scalatest_2.12-3.0.4.jar"
+                        },
+                        {
+                            "name": "scalatest_2.12",
+                            "classifier": "sources",
+                            "path": "/Users/dyelluri1/.m2/repository/org/scalatest/scalatest_2.12/3.0.4/scalatest_2.12-3.0.4-sources.jar"
+                        }
+                    ]
+                }
+            ]
+        },
+        "tags": [
+            "library"
+        ]
+    }
+}
