@@ -14,4 +14,4 @@ case class DeltaMergeConfig(
     notMatchCondition: Seq[Condition]
 ) extends OperatorConfig
 
-case class Condition(expression: String, action: String)
+case class Condition(expression: String, action: String, columnMappings: Option[Map[String, String]] = None)

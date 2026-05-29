@@ -41,7 +41,11 @@ object DeltaMergeUtils {
         matchConditions.foldLeft(deltaMergeBuilder) { (z, f) =>
           {
             f.action match {
-              case "UPDATE" => z.whenMatched(f.expression).updateAll()
+              case "UPDATE" =>
+                f.columnMappings match {
+                  case Some(mappings) => z.whenMatched(f.expression).updateExpr(mappings)
+                  case None           => z.whenMatched(f.expression).updateAll()
+                }
               case "DELETE" => z.whenMatched(f.expression).delete()
               case _        => throw new Exception("UnSupported Type")
             }
@@ -54,7 +58,11 @@ object DeltaMergeUtils {
         notMatchConditions.foldLeft(matchDeltaMergeBuilder) { (z, f) =>
           {
             f.action match {
-              case "INSERT" => z.whenNotMatched(f.expression).insertAll()
+              case "INSERT" =>
+                f.columnMappings match {
+                  case Some(mappings) => z.whenNotMatched(f.expression).insertExpr(mappings)
+                  case None           => z.whenNotMatched(f.expression).insertAll()
+                }
               case _        => throw new Exception("UnSupported Type")
             }
           }
