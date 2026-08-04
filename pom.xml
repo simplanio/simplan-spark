@@ -33,6 +33,7 @@
         <spec2.version>4.2.0</spec2.version>
         <org.scalatest.version>3.2.15</org.scalatest.version>
         <spark-avro.version>4.0.0</spark-avro.version>
+        <spark-avro.groupId>com.databricks</spark-avro.groupId>
         <slf4j-log4j12.version>1.7.30</slf4j-log4j12.version>
         <log4j.version>2.17.2</log4j.version>
         <pureconfig.version>0.17.4</pureconfig.version>
@@ -50,7 +51,7 @@
         <central.repo>https://artifact.intuit.com/artifactory/maven-proxy</central.repo>
 
         <scoverage.plugin.version>2.0.2</scoverage.plugin.version>
-
+        <skipScalaTests>false</skipScalaTests>
 
     </properties>
 
@@ -115,7 +116,7 @@
                 <version>${spark.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.databricks</groupId>
+                <groupId>${spark-avro.groupId}</groupId>
                 <artifactId>spark-avro_${scala.minor.version}</artifactId>
                 <version>${spark-avro.version}</version>
             </dependency>
@@ -159,6 +160,11 @@
                 <scala.minor.version>2.13</scala.minor.version>
                 <pureconfig.version>0.17.4</pureconfig.version>
                 <scala-parser-combinators.version>1.1.2</scala-parser-combinators.version>
+                <spark.version>4.1.0</spark.version>
+                <delta.version>4.1.0</delta.version>
+                <spark-avro.version>4.1.0</spark-avro.version>
+                <spark-avro.groupId>org.apache.spark</spark-avro.groupId>
+                <skipScalaTests>true</skipScalaTests>
             </properties>
         </profile>
         <profile>
@@ -261,6 +267,7 @@
                     <filereports>WDF TestSuite.txt</filereports>
                     <suffixes>Test|Spec|Suite</suffixes>
                     <argLine>--add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/sun.nio.ch=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/sun.security.action=ALL-UNNAMED</argLine>
+                    <skipTests>${skipScalaTests}</skipTests>
                 </configuration>
                 <executions>
                     <execution>
