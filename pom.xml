@@ -22,20 +22,22 @@
     <properties>
         <revision>1.0.0-SNAPSHOT</revision>
         <simplan-framework.version>0.5.2.35</simplan-framework.version>
-        <scala.version>2.12.4</scala.version>
+        <scala.version>2.12.18</scala.version>
         <environmentScope>compile</environmentScope>
         <scala.minor.version>2.12</scala.minor.version>
         <spark.version>3.5.1</spark.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <java.version>1.8</java.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <java.version>17</java.version>
         <encoding>UTF-8</encoding>
         <spec2.version>4.2.0</spec2.version>
-        <org.scalatest.version>3.0.4</org.scalatest.version>
+        <org.scalatest.version>3.2.15</org.scalatest.version>
         <spark-avro.version>4.0.0</spark-avro.version>
         <slf4j-log4j12.version>1.7.30</slf4j-log4j12.version>
         <log4j.version>2.17.2</log4j.version>
-        <pureconfig.version>0.9.0</pureconfig.version>
+        <pureconfig.version>0.17.4</pureconfig.version>
+        <scopt.version>4.1.0</scopt.version>
+        <jacoco.version>0.8.11</jacoco.version>
 <!--        <jackson-module-caseclass.version>1.1.1</jackson-module-caseclass.version>-->
         <antlr4.version>4.7.1</antlr4.version>
         <antlr4.plugin.version>4.7.1</antlr4.plugin.version>
@@ -47,7 +49,7 @@
         <snapshotdeployrepo>https://artifact.intuit.com/artifactory/maven.Simplan.simplan-snapshots</snapshotdeployrepo>
         <central.repo>https://artifact.intuit.com/artifactory/maven-proxy</central.repo>
 
-        <scoverage.plugin.version>1.4.11</scoverage.plugin.version>
+        <scoverage.plugin.version>2.0.2</scoverage.plugin.version>
 
 
     </properties>
@@ -76,6 +78,27 @@
     </dependencies>
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.scala-lang</groupId>
+                <artifactId>scala-library</artifactId>
+                <version>${scala.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.scalatest</groupId>
+                <artifactId>scalatest_${scala.minor.version}</artifactId>
+                <version>${org.scalatest.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-text</artifactId>
+                <version>1.9</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.scopt</groupId>
+                <artifactId>scopt_${scala.minor.version}</artifactId>
+                <version>${scopt.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.apache.spark</groupId>
                 <artifactId>spark-core_${scala.minor.version}</artifactId>
@@ -112,6 +135,32 @@
     </dependencyManagement>
 
     <profiles>
+        <profile>
+            <id>scala-2.12</id>
+            <activation><activeByDefault>true</activeByDefault></activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>net.alchim31.maven</groupId>
+                        <artifactId>scala-maven-plugin</artifactId>
+                        <configuration>
+                            <args>
+                                <arg>-Xmacro-settings:materialize-derivations</arg>
+                            </args>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>scala-2.13</id>
+            <properties>
+                <scala.version>2.13.12</scala.version>
+                <scala.minor.version>2.13</scala.minor.version>
+                <pureconfig.version>0.17.4</pureconfig.version>
+                <scala-parser-combinators.version>1.1.2</scala-parser-combinators.version>
+            </properties>
+        </profile>
         <profile>
             <id>upload-artifact</id>
             <distributionManagement>
@@ -162,16 +211,16 @@
             <plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
-                <version>3.2.2</version>
+                <version>4.8.1</version>
                 <configuration>
                     <scalaCompatVersion>${scala.minor.version}</scalaCompatVersion>
                     <scalaVersion>${scala.version}</scalaVersion>
-                    <args>
-                        <arg>-Xmacro-settings:materialize-derivations</arg>
-                    </args>
                     <jvmArgs>
                         <jvmArg>-Xms128m</jvmArg>
                         <jvmArg>-Xmx1024m</jvmArg>
+                        <jvmArg>--add-opens=java.base/java.lang=ALL-UNNAMED</jvmArg>
+                        <jvmArg>--add-opens=java.base/java.util=ALL-UNNAMED</jvmArg>
+                        <jvmArg>--add-opens=java.base/sun.nio.ch=ALL-UNNAMED</jvmArg>
                     </jvmArgs>
                 </configuration>
                 <executions>
@@ -210,6 +259,8 @@
                     <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
                     <junitxml>.</junitxml>
                     <filereports>WDF TestSuite.txt</filereports>
+                    <suffixes>Test|Spec|Suite</suffixes>
+                    <argLine>--add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/sun.nio.ch=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/sun.security.action=ALL-UNNAMED</argLine>
                 </configuration>
                 <executions>
                     <execution>
@@ -228,6 +279,22 @@
                     <scalaVersion>${scala.version}</scalaVersion>
                     <highlighting>true</highlighting>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <executions>
+                    <execution>
+                        <id>prepare</id>
+                        <goals><goal>prepare-agent</goal></goals>
+                    </execution>
+                    <execution>
+                        <id>generate-report</id>
+                        <phase>test</phase>
+                        <goals><goal>report</goal></goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
