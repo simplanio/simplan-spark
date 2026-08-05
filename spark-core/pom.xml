@@ -11,7 +11,7 @@
     <dependencies>
         <dependency>
             <groupId>com.intuit.data.simplan.framework</groupId>
-            <artifactId>simplan-core</artifactId>
+            <artifactId>simplan-core_${scala.minor.version}</artifactId>
             <version>${simplan-framework.version}</version>
         </dependency>
         <dependency>
@@ -35,7 +35,7 @@
         </dependency>
         <dependency>
             <groupId>com.intuit.data.simplan.framework</groupId>
-            <artifactId>simplan-parserdsl</artifactId>
+            <artifactId>simplan-parserdsl_${scala.minor.version}</artifactId>
             <version>${simplan-framework.version}</version>
         </dependency>
         <dependency>

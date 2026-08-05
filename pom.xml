@@ -22,7 +22,7 @@
     <properties>
         <revision>1.0.0-SNAPSHOT</revision>
         <!--         TODO: need revert-->
-        <simplan-framework.version>1.0.0-SNAPSHOT</simplan-framework.version>
+        <simplan-framework.version>0.5.2.47</simplan-framework.version>
         <scala.version>2.12.18</scala.version>
         <environmentScope>compile</environmentScope>
         <scala.minor.version>2.12</scala.minor.version>
@@ -33,6 +33,7 @@
         <encoding>UTF-8</encoding>
         <spec2.version>4.2.0</spec2.version>
         <org.scalatest.version>3.0.4</org.scalatest.version>
+        <scopt.version>3.7.1</scopt.version>
         <spark-avro.version>4.0.0</spark-avro.version>
         <slf4j-log4j12.version>1.7.30</slf4j-log4j12.version>
         <log4j.version>2.17.2</log4j.version>
@@ -70,10 +71,12 @@
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
+            <version>${scala.version}</version>
         </dependency>
         <dependency>
             <groupId>org.scalatest</groupId>
             <artifactId>scalatest_${scala.minor.version}</artifactId>
+            <version>${org.scalatest.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
