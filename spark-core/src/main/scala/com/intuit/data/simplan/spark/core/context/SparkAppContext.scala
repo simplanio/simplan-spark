@@ -7,16 +7,18 @@ import com.intuit.data.simplan.global.qualifiedstring.QualifiedParameterManager
 import com.intuit.data.simplan.spark.core.config.SparkSystemConfiguration
 import com.intuit.data.simplan.spark.core.domain.Constants.ENABLE_HIVE_SUPPORT
 import com.intuit.data.simplan.spark.core.qualifiedstring.{DDLSchemaQualifiedParamHandler, JsonSchemaQualifiedParamHandler}
-import com.intuit.data.simplan.spark.core.utils.SparkFileUtils
 import com.typesafe.config.ConfigValueFactory
+import org.apache.spark.SparkConf
 import org.apache.spark.sql.SparkSession
-import org.apache.spark.{SparkConf, SparkContext}
 import org.slf4j.LoggerFactory
+
+import scala.util.Try
 
 /** @author - Abraham, Thomas - tabaraham1
   *         Created on 8/19/21 at 1:21 AM
   */
 class SparkAppContext(val initContext: InitContext) extends AppContext(initContext) {
+  final private val SPARK_APP_ID_CONST="spark.app.id"
   private lazy val logger = LoggerFactory.getLogger(classOf[SparkAppContext])
   def this(configs: Array[String]) = this(InitContext(userConfigs = configs))
   addDefaultAppContextConfigFile("spark-operator-mappings.conf")
@@ -24,17 +26,17 @@ class SparkAppContext(val initContext: InitContext) extends AppContext(initConte
   QualifiedParameterManager.registerHandler(new DDLSchemaQualifiedParamHandler)
   QualifiedParameterManager.registerHandler(new JsonSchemaQualifiedParamHandler)
 
-  override lazy val applicationId: String = spark.sparkContext.applicationId
+  override lazy val applicationId: String = spark.conf.get(SPARK_APP_ID_CONST)
 
   private lazy val sparkSystemConfiguration: SparkSystemConfiguration = appContextConfig.getSystemConfigAs[SparkSystemConfiguration]("spark")
 
   lazy val spark: SparkSession = {
     sparkSystemConfiguration.properties.foreach(each => System.setProperty(each._1, each._2))
     val sparkConf = new SparkConf()
-      .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
       .setAll(sparkSystemConfiguration.properties)
       .setAppName(appContextConfig.application.name)
-    val sparkBuilder = SparkSession.builder().appName(appContextConfig.application.name).config(sparkConf)
+
+    val sparkBuilder = SparkSession.builder().appName(appContextConfig.application.name).config(sparkConf.getAll.toMap)
     val attachHiveSupport =
       if (sparkSystemConfiguration.options != null
         && sparkSystemConfiguration.options.contains(ENABLE_HIVE_SUPPORT)
@@ -45,7 +47,7 @@ class SparkAppContext(val initContext: InitContext) extends AppContext(initConte
     registerCustomUDFs(session)
     session
   }
-  initContext.overrideAnyConfig("simplan.application.runId", ConfigValueFactory.fromAnyRef(spark.sparkContext.applicationId))
+  initContext.overrideAnyConfig("simplan.application.runId", ConfigValueFactory.fromAnyRef(spark.conf.get(SPARK_APP_ID_CONST)))
 //  StreamMonitoring(this).attachMonitoringListener()
 
   private def registerCustomUDFs(spark: SparkSession): Unit = {
@@ -57,8 +59,9 @@ class SparkAppContext(val initContext: InitContext) extends AppContext(initConte
           spark.sql(functionDefinition)
       }
   }
-
-  lazy val sc: SparkContext = spark.sparkContext
+  lazy val sc =  if(Try(spark.getClass.getMethod("sparkContext")).isSuccess){
+    spark.sparkContext
+  } else null
   override lazy val fileUtils: FileUtils = AmazonS3FileUtils.create()
 }
 

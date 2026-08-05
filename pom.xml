@@ -21,7 +21,7 @@
 
     <properties>
         <revision>1.0.0-SNAPSHOT</revision>
-        <simplan-framework.version>0.5.2.35</simplan-framework.version>
+        <simplan-framework.version>0.5.2.47</simplan-framework.version>
         <scala.version>2.12.18</scala.version>
         <environmentScope>compile</environmentScope>
         <scala.minor.version>2.12</scala.minor.version>
@@ -54,6 +54,9 @@
         <scoverage.plugin.version>2.0.2</scoverage.plugin.version>
         <skipScalaTests>false</skipScalaTests>
 
+        <!-- Empty by default (Java 8). Overridden by java17+ profile. -->
+        <spark.test.jvmArgs></spark.test.jvmArgs>
+
     </properties>
 
     <repositories>
@@ -71,10 +74,12 @@
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
+            <version>${scala.version}</version>
         </dependency>
         <dependency>
             <groupId>org.scalatest</groupId>
             <artifactId>scalatest_${scala.minor.version}</artifactId>
+            <version>${org.scalatest.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -137,6 +142,59 @@
     </dependencyManagement>
 
     <profiles>
+        <!-- Auto-activates on JDK 9+ to add add-opens flags required by Spark -->
+        <profile>
+            <id>java17</id>
+            <activation>
+                <jdk>[9,)</jdk>
+            </activation>
+            <properties>
+                <spark.test.jvmArgs>
+                    --add-opens=java.base/java.lang=ALL-UNNAMED
+                    --add-opens=java.base/java.lang.invoke=ALL-UNNAMED
+                    --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+                    --add-opens=java.base/java.io=ALL-UNNAMED
+                    --add-opens=java.base/java.net=ALL-UNNAMED
+                    --add-opens=java.base/java.nio=ALL-UNNAMED
+                    --add-opens=java.base/java.util=ALL-UNNAMED
+                    --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+                    --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED
+                    --add-opens=java.base/sun.nio.ch=ALL-UNNAMED
+                    --add-opens=java.base/sun.nio.cs=ALL-UNNAMED
+                    --add-opens=java.base/sun.security.action=ALL-UNNAMED
+                    --add-opens=java.base/sun.util.calendar=ALL-UNNAMED
+                    --add-opens=java.security.jgss/sun.security.krb5=ALL-UNNAMED
+                </spark.test.jvmArgs>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>net.alchim31.maven</groupId>
+                        <artifactId>scala-maven-plugin</artifactId>
+                        <configuration>
+                            <jvmArgs>
+                                <jvmArg>-Xms128m</jvmArg>
+                                <jvmArg>-Xmx1024m</jvmArg>
+                                <jvmArg>--add-opens=java.base/java.lang=ALL-UNNAMED</jvmArg>
+                                <jvmArg>--add-opens=java.base/java.lang.invoke=ALL-UNNAMED</jvmArg>
+                                <jvmArg>--add-opens=java.base/java.lang.reflect=ALL-UNNAMED</jvmArg>
+                                <jvmArg>--add-opens=java.base/java.io=ALL-UNNAMED</jvmArg>
+                                <jvmArg>--add-opens=java.base/java.net=ALL-UNNAMED</jvmArg>
+                                <jvmArg>--add-opens=java.base/java.nio=ALL-UNNAMED</jvmArg>
+                                <jvmArg>--add-opens=java.base/java.util=ALL-UNNAMED</jvmArg>
+                                <jvmArg>--add-opens=java.base/java.util.concurrent=ALL-UNNAMED</jvmArg>
+                                <jvmArg>--add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED</jvmArg>
+                                <jvmArg>--add-opens=java.base/sun.nio.ch=ALL-UNNAMED</jvmArg>
+                                <jvmArg>--add-opens=java.base/sun.nio.cs=ALL-UNNAMED</jvmArg>
+                                <jvmArg>--add-opens=java.base/sun.security.action=ALL-UNNAMED</jvmArg>
+                                <jvmArg>--add-opens=java.base/sun.util.calendar=ALL-UNNAMED</jvmArg>
+                                <jvmArg>--add-opens=java.security.jgss/sun.security.krb5=ALL-UNNAMED</jvmArg>
+                            </jvmArgs>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>scala-2.12</id>
             <activation><activeByDefault>true</activeByDefault></activation>
@@ -219,7 +277,7 @@
             <plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
-                <version>4.8.1</version>
+                <version>4.9.2</version>
                 <configuration>
                     <scalaCompatVersion>${scala.minor.version}</scalaCompatVersion>
                     <scalaVersion>${scala.version}</scalaVersion>
@@ -268,7 +326,7 @@
                     <junitxml>.</junitxml>
                     <filereports>WDF TestSuite.txt</filereports>
                     <suffixes>Test|Spec|Suite</suffixes>
-                    <argLine>--add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/sun.nio.ch=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/sun.security.action=ALL-UNNAMED</argLine>
+                    <argLine>${spark.test.jvmArgs}</argLine>
                     <skipTests>${skipScalaTests}</skipTests>
                 </configuration>
                 <executions>

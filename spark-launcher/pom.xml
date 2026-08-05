@@ -34,6 +34,7 @@
         <dependency>
             <groupId>com.github.scopt</groupId>
             <artifactId>scopt_${scala.minor.version}</artifactId>
+            <version>${scopt.version}</version>
         </dependency>
     </dependencies>
 
