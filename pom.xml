@@ -25,6 +25,7 @@
         <scala.version>2.12.18</scala.version>
         <environmentScope>compile</environmentScope>
         <scala.minor.version>2.12</scala.minor.version>
+        <scala.suffix>_2.12</scala.suffix>
         <spark.version>3.5.1</spark.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
@@ -158,6 +159,7 @@
             <properties>
                 <scala.version>2.13.12</scala.version>
                 <scala.minor.version>2.13</scala.minor.version>
+                <scala.suffix>_2.13</scala.suffix>
                 <pureconfig.version>0.17.4</pureconfig.version>
                 <scala-parser-combinators.version>1.1.2</scala-parser-combinators.version>
                 <spark.version>4.1.0</spark.version>
@@ -192,7 +194,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
-                <version>1.0.0</version>
+                <version>1.6.0</version>
                 <configuration>
                     <updatePomFile>true</updatePomFile>
                     <flattenMode>bom</flattenMode>
