@@ -110,7 +110,7 @@ object DataframeUtils extends Logging {
       val partitionColumns = getPartitionColumns(tableName)
       logger.info(s"Partition columns for table $tableName are ${partitionColumns.mkString(",")}")
       val partitionSpecSqlSection = partitionColumns match {
-        case _ if partitionColumns nonEmpty =>
+        case _ if partitionColumns.nonEmpty =>
           val partitionSpecString = partitionSpec.map { case (key, value) => s"$key='$value'" }.mkString(", ")
           "PARTITION (" + partitionSpecString + ")"
         case _ => ""

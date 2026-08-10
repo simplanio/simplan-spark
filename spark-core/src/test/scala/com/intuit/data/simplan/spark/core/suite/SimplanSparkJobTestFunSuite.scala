@@ -51,7 +51,7 @@ abstract class SimplanSparkJobTestFunSuite(appContextConfigs: List[String] = Lis
 
   override def afterAll() {
     Try {
-      context.sc.stop()
+      Try(context.sc.stop())
       context.spark.stop()
     }
     val warehouse = new File("spark-warehouse")

@@ -41,7 +41,7 @@ pipeline {
         spec:
           containers:
           - name: maven
-            image: 'docker.artifactory.a.intuit.com/maven:3.5.3-jdk-8'
+            image: 'docker.artifactory.a.intuit.com/maven:3.9.9-eclipse-temurin-21'
             tty: true
             command:
             - cat
@@ -57,7 +57,7 @@ pipeline {
               - name: shared-build-output
                 mountPath: /var/run/outputs
           - name: sonar-maven
-            image: 'docker.artifactory.a.intuit.com/maven:3.6.0-jdk-11'
+            image: 'docker.artifactory.a.intuit.com/maven:3.9.9-eclipse-temurin-21'
             command:
                 - cat
             tty: true
@@ -124,7 +124,8 @@ pipeline {
         stage('INIT DEFINITIONS') {
             steps {
                 script {
-                    config = readConfigYAML()
+                    config = readConfigYAML() + [code_repo: env.GIT_URL, deploy_repo: env.GIT_URL]
+                    sh 'git config --global --add safe.directory $(pwd)'
                     commitId = sh(script: 'git rev-parse HEAD', returnStdout: true)
                     revisionNo = ('Imain' == env.BRANCH_NAME) ? config.artifactVersion + '.' + env.BUILD_NUMBER : "1.0.0${versionSuffix}"
                     def numberToSendInSlack = (env.ARTIFACT_VERSION == "e.g.1.0.0.100" && params.promote == "E2E") ? revisionNo : env.ARTIFACT_VERSION
@@ -147,6 +148,7 @@ pipeline {
             }
             steps {
                 mavenBuildPR("-U -B -s settings.xml")
+                mavenBuildPR("-P scala-2.13 -U -B -s settings.xml")
             }
             post {
                 success {
@@ -184,6 +186,7 @@ pipeline {
 		            printf 'simplan.system.ci.spark.version=${revisionNo}\nsimplan.system.ci.spark.framework=${config.simplanFrameworkVersion}\nsimplan.system.ci.spark.commitHash=${commitId}' > spark-core/src/main/resources/simplan-spark-manifest.conf
 		          """
                             mavenBuildCI("-P upload-artifact -Drevision=${revisionNo} -U -B -s settings.xml")
+                            mavenBuildCI("-P upload-artifact,scala-2.13 -Drevision=${revisionNo} -U -B -s settings.xml")
                             // Tagging only when it is a realease version (master branch), artifact version is built from config.artifactVersion and buildNo
 // 		          if ( env.BRANCH_NAME == 'Imain' ) {
 // 		            gitTag(revisionNo, env.GIT_URL)
